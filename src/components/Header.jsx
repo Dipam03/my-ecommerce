@@ -1,0 +1,101 @@
+import { Link, useNavigate } from 'react-router-dom'
+import { FiShoppingCart, FiSearch, FiMenu } from 'react-icons/fi'
+import { useCartStore } from '../store/cartStore'
+import { useState } from 'react'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { auth } from '../firebase'
+import { signOut } from 'firebase/auth'
+
+export default function Header({ onCartClick }) {
+  const total = useCartStore((s) => s.totalCount)
+  const navigate = useNavigate()
+  const [q, setQ] = useState('')
+  const [user] = useAuthState(auth)
+
+  const onSearch = (e) => {
+    e.preventDefault()
+    navigate('/products?q=' + encodeURIComponent(q))
+  }
+
+  const onLogout = async () => {
+    try { await signOut(auth) } catch (e) { console.warn(e) }
+  }
+
+  return (
+    <header className="w-full bg-white border-b border-gray-200 px-3 sm:px-4 py-3 sticky top-0 z-20 shadow-sm">
+      <div className="max-w-4xl mx-auto">
+        {/* Desktop view */}
+        <div className="hidden sm:flex items-center gap-3">
+          <Link to="/" className="font-bold text-lg sm:text-xl text-gray-900 whitespace-nowrap">Crodyto</Link>
+
+          <form onSubmit={onSearch} className="flex-1 max-w-md">
+            <div className="flex items-center bg-gray-100 rounded-lg overflow-hidden">
+              <input
+                className="flex-1 px-3 py-2 bg-transparent outline-none text-sm"
+                placeholder="Search products..."
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+              />
+              <button type="submit" className="px-3 py-2 text-gray-600 hover:text-gray-700 transition-colors" aria-label="search">
+                <FiSearch size={18} />
+              </button>
+            </div>
+          </form>
+
+          <div className="flex items-center gap-3">
+            <button onClick={onCartClick} className="relative text-gray-600 hover:text-gray-700 transition-colors" aria-label="cart">
+              <FiShoppingCart size={20} />
+              {total > 0 && (
+                <span className="absolute -top-2 -right-2 bg-gray-700 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">{total}</span>
+              )}
+            </button>
+
+            {user ? (
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-700">{user.displayName || user.email.substring(0, 10)}</span>
+                <button onClick={onLogout} className="px-3 py-1 text-sm border border-gray-200 text-gray-900 rounded-lg hover:bg-gray-50 transition-colors font-medium">Logout</button>
+              </div>
+            ) : (
+              <Link to="/login" className="px-3 py-1 text-sm border border-gray-200 text-gray-900 rounded-lg hover:bg-gray-50 transition-colors font-medium">Login</Link>
+            )}
+          </div>
+        </div>
+
+        {/* Mobile view */}
+        <div className="sm:hidden flex items-center justify-between">
+          <Link to="/" className="font-bold text-lg text-gray-900">Crodyto</Link>
+
+          <div className="flex items-center gap-2">
+            <button onClick={onCartClick} className="relative p-2 text-gray-600 hover:text-gray-700 transition-colors" aria-label="cart">
+              <FiShoppingCart size={20} />
+              {total > 0 && (
+                <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">{total}</span>
+              )}
+            </button>
+
+            {user ? (
+              <button onClick={onLogout} className="p-2 text-xs bg-gray-100 text-gray-900 rounded-lg font-medium">Out</button>
+            ) : (
+              <Link to="/login" className="p-2 text-xs bg-gray-100 text-gray-900 rounded-lg font-medium">Login</Link>
+            )}
+          </div>
+        </div>
+
+        {/* Mobile search bar */}
+        <form onSubmit={onSearch} className="sm:hidden mt-3">
+          <div className="flex items-center bg-gray-100 rounded-lg overflow-hidden">
+            <input
+              className="flex-1 px-3 py-2 bg-transparent outline-none text-sm"
+              placeholder="Search..."
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+            />
+            <button type="submit" className="px-3 py-2 text-gray-600 hover:text-red-600 transition-colors" aria-label="search">
+              <FiSearch size={16} />
+            </button>
+          </div>
+        </form>
+      </div>
+    </header>
+  )
+}
