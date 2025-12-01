@@ -1,10 +1,45 @@
 import { useOrderStore } from '../store/orderStore'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { auth } from '../firebase'
 import { Link } from 'react-router-dom'
 import { FiEye, FiTrash2 } from 'react-icons/fi'
 import dayjs from 'dayjs'
+import { useEffect } from 'react'
 
 export default function Orders() {
-  const { orders, cancelOrder } = useOrderStore()
+  const { orders, fetchOrders, loading, error, cancelOrder } = useOrderStore()
+  const [user] = useAuthState(auth)
+
+  useEffect(() => {
+    if (user) {
+      fetchOrders(user.uid)
+    }
+  }, [user, fetchOrders])
+
+  if (loading) {
+    return (
+      <div className="max-w-3xl mx-auto p-4 pb-24 text-center">
+        <p className="text-gray-500">Loading orders...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-3xl mx-auto p-4 pb-24">
+        <p className="text-red-600 bg-red-50 p-3 rounded">Error loading orders: {error}</p>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <div className="max-w-3xl mx-auto p-4 pb-24 text-center">
+        <p className="text-gray-500 mb-4">Please login to view your orders</p>
+        <Link to="/login" className="text-blue-600 hover:underline">Go to Login</Link>
+      </div>
+    )
+  }
 
   return (
     <div className="max-w-3xl mx-auto p-4 pb-24">
@@ -31,7 +66,7 @@ export default function Orders() {
 
               <div className="text-sm mb-3">
                 <div className="text-gray-600">Items: {order.items.length}</div>
-                <div className="font-medium">${order.total.toFixed(2)}</div>
+                <div className="font-medium">₹{order.total.toFixed(0)}</div>
               </div>
 
               <div className="flex gap-2">

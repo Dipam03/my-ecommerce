@@ -1,10 +1,8 @@
-// Firebase initialization using Vite env variables. Fill `.env` with your
-// VITE_FIREBASE_* values (see `.env.example` or the `.env` file in repo).
+// Firebase initialization using Vite env variables
 import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 import { getStorage } from 'firebase/storage'
-// Analytics is optional — only initialize if a measurementId is present.
 import { getAnalytics } from 'firebase/analytics'
 
 const firebaseConfig = {
@@ -17,6 +15,13 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 }
 
+// Verify config is loaded
+if (!firebaseConfig.apiKey) {
+  console.error('Firebase config not loaded. Check your .env file.')
+} else {
+  console.info('[Firebase] Config loaded successfully. Project:', firebaseConfig.projectId)
+}
+
 const app = initializeApp(firebaseConfig)
 
 let analytics
@@ -24,8 +29,7 @@ if (import.meta.env.VITE_FIREBASE_MEASUREMENT_ID && typeof window !== 'undefined
   try {
     analytics = getAnalytics(app)
   } catch (e) {
-    // Analytics failed to initialize (maybe in non-browser env). Ignore.
-    // console.warn('Firebase analytics init failed', e)
+    console.warn('Firebase analytics init failed', e)
   }
 }
 

@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth } from '../firebase'
 import { signOut } from 'firebase/auth'
+import Logo from './Logo'
 
 export default function Header({ onCartClick }) {
   const total = useCartStore((s) => s.totalCount)
@@ -26,7 +27,9 @@ export default function Header({ onCartClick }) {
       <div className="max-w-4xl mx-auto">
         {/* Desktop view */}
         <div className="hidden sm:flex items-center gap-3">
-          <Link to="/" className="font-bold text-lg sm:text-xl text-gray-900 whitespace-nowrap">Crodyto</Link>
+          <Link to="/" aria-label="Home">
+            <Logo />
+          </Link>
 
           <form onSubmit={onSearch} className="flex-1 max-w-md">
             <div className="flex items-center bg-gray-100 rounded-lg overflow-hidden">
@@ -63,7 +66,9 @@ export default function Header({ onCartClick }) {
 
         {/* Mobile view */}
         <div className="sm:hidden flex items-center justify-between">
-          <Link to="/" className="font-bold text-lg text-gray-900">Crodyto</Link>
+          <Link to="/" aria-label="Home">
+            <Logo small />
+          </Link>
 
           <div className="flex items-center gap-2">
             <button onClick={onCartClick} className="relative p-2 text-gray-600 hover:text-gray-700 transition-colors" aria-label="cart">

@@ -1,16 +1,61 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useCartStore } from '../store/cartStore'
 import { useOrderStore } from '../store/orderStore'
 import { useNavigate } from 'react-router-dom'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { auth, db } from '../firebase'
+import { doc, getDoc } from 'firebase/firestore'
+import UPIScanner from '../components/UPIScanner'
+import { FiCheck } from 'react-icons/fi'
 
 export default function Checkout() {
   const navigate = useNavigate()
   const { items, clear } = useCartStore()
   const { addOrder } = useOrderStore()
+  const [user] = useAuthState(auth)
   const [paymentMethod, setPaymentMethod] = useState('cod')
   const [address, setAddress] = useState('')
   const [phone, setPhone] = useState('')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(true)
+  const [showUPIScanner, setShowUPIScanner] = useState(false)
+  const [upiPaymentStatus, setUpiPaymentStatus] = useState(null)
+
+  // Load saved address from Firestore on mount
+  useEffect(() => {
+    const loadAddress = async () => {
+      if (user) {
+        try {
+          const userDocRef = doc(db, 'users', user.uid)
+          const userDoc = await getDoc(userDocRef)
+          
+          if (userDoc.exists()) {
+            const userData = userDoc.data()
+            const addr = userData.address
+            if (addr) {
+              // Build address string from components
+              const addrParts = [
+                addr.village || addr.city,
+                addr.po,
+                addr.ps,
+                addr.district,
+                addr.pin
+              ].filter(Boolean).join(', ')
+              const addrWithLandmark = addr.landmark ? `${addrParts} (${addr.landmark})` : addrParts
+              setAddress(addrWithLandmark)
+              // Use mobile from address, fallback to phone
+              setPhone(addr.mobile || addr.phone || user.phoneNumber || '')
+            }
+          }
+        } catch (e) {
+          console.warn('Failed to load address', e)
+        }
+      }
+      setLoading(false)
+    }
+    
+    loadAddress()
+  }, [user])
 
   const total = items.reduce((s, i) => s + i.price * (i.qty || 1), 0)
 
@@ -23,12 +68,21 @@ export default function Checkout() {
       return
     }
 
+    // For UPI, show scanner instead of direct order
+    if (paymentMethod === 'upi') {
+      if (!upiPaymentStatus) {
+        setShowUPIScanner(true)
+        return
+      }
+    }
+
     const order = {
       items,
       total,
       paymentMethod,
       address,
       phone,
+      paymentDetails: upiPaymentStatus || null,
       deliveryStatus: [
         { step: 'confirmed', completed: true, date: new Date().toISOString() },
         { step: 'processing', completed: false, date: null },
@@ -37,9 +91,42 @@ export default function Checkout() {
       ]
     }
 
-    addOrder(order)
-    clear()
-    navigate('/orders')
+    try {
+      await addOrder(order)
+      clear()
+      navigate('/orders')
+    } catch (err) {
+      setError('Failed to place order: ' + err.message)
+    }
+  }
+
+  const handleUPIPaymentSuccess = async (paymentData) => {
+    setUpiPaymentStatus(paymentData)
+    setShowUPIScanner(false)
+    // Auto-submit the order after successful payment
+    setTimeout(async () => {
+      const order = {
+        items,
+        total,
+        paymentMethod,
+        address,
+        phone,
+        paymentDetails: paymentData,
+        deliveryStatus: [
+          { step: 'confirmed', completed: true, date: new Date().toISOString() },
+          { step: 'processing', completed: false, date: null },
+          { step: 'shipped', completed: false, date: null },
+          { step: 'delivered', completed: false, date: null },
+        ]
+      }
+      try {
+        await addOrder(order)
+        clear()
+        navigate('/orders')
+      } catch (err) {
+        setError('Failed to place order: ' + err.message)
+      }
+    }, 1000)
   }
 
   if (items.length === 0) {
@@ -142,6 +229,16 @@ export default function Checkout() {
           Place Order
         </button>
       </form>
+
+      {/* UPI Scanner Modal */}
+      {showUPIScanner && (
+        <UPIScanner 
+          onSuccess={handleUPIPaymentSuccess}
+          onClose={() => setShowUPIScanner(false)}
+          amount={total}
+          upiId="support@dsmart.upi"
+        />
+      )}
     </div>
   )
 }

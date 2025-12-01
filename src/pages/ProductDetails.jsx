@@ -1,9 +1,13 @@
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useCartStore } from '../store/cartStore'
 import { useWishlistStore } from '../store/wishlistStore'
 import ReviewSection from '../components/ReviewSection'
+import ImageLightbox from '../components/ImageLightbox'
 import { FiHeart, FiShare2 } from 'react-icons/fi'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useAuthState } from 'react-firebase-hooks/auth'
+import { auth } from '../firebase'
+import { useProductStore } from '../store/productStore'
 
 export default function ProductDetails(){
   const { id } = useParams()
@@ -12,8 +16,26 @@ export default function ProductDetails(){
   const [qty, setQty] = useState(1)
   const [size, setSize] = useState('M')
   const [added, setAdded] = useState(false)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
 
-  const product = { id, name: `Product ${id}`, price: Number(id)*10, rating: 4.5, reviews: 120 }
+  const getProduct = useProductStore(s => s.getProduct)
+  const updateProduct = useProductStore(s => s.updateProduct)
+  const [user] = useAuthState(auth)
+
+  // Try to read product from product store (Firestore). Fallback to sample product.
+  const storeProduct = getProduct(id)
+  const product = storeProduct || { id, name: `Product ${id}`, price: Number(id)*10, rating: 4.5, reviews: 120, image: `https://via.placeholder.com/500x500?text=Product+${id}+Image` }
+
+  // Build images array
+  const productImages = (product.images && product.images.length)
+    ? product.images
+    : (product.image ? [product.image] : [
+      `https://via.placeholder.com/500x500?text=Product+${id}+Image+1`,
+      `https://via.placeholder.com/500x500?text=Product+${id}+Image+2`,
+      `https://via.placeholder.com/500x500?text=Product+${id}+Image+3`,
+    ])
+
   const isWishlisted = wishlistItems.some(p => p.id === id)
 
   const onAddCart = () => {
@@ -25,6 +47,14 @@ export default function ProductDetails(){
   const onToggleWishlist = () => {
     if (isWishlisted) removeFromWishlist(id)
     else addToWishlist(product)
+  }
+
+  const navigate = useNavigate()
+
+  const onBuyNow = () => {
+    // Add to cart and go to checkout immediately
+    addToCart({ ...product, qty, size })
+    navigate('/checkout')
   }
 
   const onShare = async () => {
@@ -41,9 +71,77 @@ export default function ProductDetails(){
     }
   }
 
+  const openLightbox = (index) => {
+    setSelectedImageIndex(index)
+    setLightboxOpen(true)
+  }
+
+  // Add to recently viewed (localStorage)
+  useEffect(() => {
+    try {
+      const key = 'recentlyViewed'
+      const raw = localStorage.getItem(key)
+      const list = raw ? JSON.parse(raw) : []
+      // remove existing with same id
+      const filtered = list.filter(it => String(it.id) !== String(id))
+      const item = { id, name: product.name, image: productImages[0] || '', viewedAt: Date.now() }
+      filtered.unshift(item)
+      const limited = filtered.slice(0, 10)
+      localStorage.setItem(key, JSON.stringify(limited))
+    } catch (e) {
+      console.warn('Failed to update recently viewed', e)
+    }
+  }, [id, product.name, productImages])
+
+  // Inline edit image (prompts for URL) — updates Firestore via product store
+  const onEditImage = async () => {
+    const url = window.prompt('Enter new image URL for this product', productImages[0] || '')
+    if (!url) return
+    try {
+      await updateProduct(id, { image: url })
+      alert('Image updated')
+    } catch (e) {
+      console.error('Failed to update image', e)
+      alert('Failed to update image')
+    }
+  }
+
   return (
     <div className="max-w-3xl mx-auto p-4 pb-24">
-      <div className="bg-gray-200 dark:bg-gray-700 rounded h-64 mb-4" />
+      {/* Main Product Image */}
+      <div 
+        onClick={() => openLightbox(0)}
+        className="bg-gray-200 dark:bg-gray-700 rounded h-64 mb-4 cursor-pointer hover:opacity-80 transition overflow-hidden"
+      >
+        <img 
+          src={productImages[0]} 
+          alt="Product main" 
+          className="w-full h-full object-cover"
+        />
+      </div>
+
+      {/* Image Thumbnails */}
+      {productImages.length > 1 && (
+        <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
+          {productImages.map((img, idx) => (
+            <button
+              key={idx}
+              onClick={() => openLightbox(idx)}
+              className="flex-shrink-0 w-16 h-16 rounded border-2 border-transparent hover:border-gray-400 cursor-pointer transition overflow-hidden"
+            >
+              <img src={img} alt={`Product ${idx + 1}`} className="w-full h-full object-cover" />
+            </button>
+          ))}
+        </div>
+      )}
+      {/* Edit image (visible to signed-in users) */}
+      {user && (
+        <div className="mb-4">
+          <button onClick={onEditImage} className="text-sm px-3 py-1 border rounded bg-white hover:bg-gray-50">
+            Edit Image
+          </button>
+        </div>
+      )}
       
       <div className="flex justify-between items-start mb-2">
         <div>
@@ -89,13 +187,30 @@ export default function ProductDetails(){
           </div>
         </div>
 
-        <button 
-          onClick={onAddCart}
-          className={`w-full py-3 rounded font-medium transition ${added ? 'bg-green-600 text-white' : 'bg-red-600 text-white hover:bg-red-700'}`}
-        >
-          {added ? '✓ Added to cart' : 'Add to cart'}
-        </button>
+        <div className="grid grid-cols-2 gap-3">
+          <button 
+            onClick={onAddCart}
+            className={`w-full py-3 rounded font-medium transition ${added ? 'bg-green-600 text-white' : 'bg-red-600 text-white hover:bg-red-700'}`}
+          >
+            {added ? '✓ Added' : 'Add to cart'}
+          </button>
+
+          <button
+            onClick={onBuyNow}
+            className="w-full py-3 rounded font-medium bg-green-600 text-white hover:bg-green-700"
+          >
+            Buy Now
+          </button>
+        </div>
       </div>
+
+      {/* Image Lightbox */}
+      <ImageLightbox 
+        images={productImages} 
+        initialIndex={selectedImageIndex}
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+      />
 
       {/* Reviews Section */}
       <ReviewSection productId={id} />

@@ -6,6 +6,8 @@ import dayjs from 'dayjs'
 export default function OrderTracking() {
   const { id } = useParams()
   const { getOrder } = useOrderStore()
+  
+  // order can be undefined during first render
   const order = getOrder(id)
 
   if (!order) {
@@ -19,6 +21,9 @@ export default function OrderTracking() {
   const onCopyOrderId = () => {
     navigator.clipboard.writeText(order.id)
   }
+
+  // SAFE fallback if deliveryStatus missing
+  const deliverySteps = order.deliveryStatus ?? []
 
   return (
     <div className="max-w-2xl mx-auto p-4 pb-24">
@@ -38,34 +43,58 @@ export default function OrderTracking() {
       {/* Delivery Timeline */}
       <div className="bg-white dark:bg-gray-800 p-4 rounded mb-4">
         <h3 className="font-semibold mb-4">Delivery Status</h3>
+
         <div className="space-y-3">
-          {order.deliveryStatus.map((step, idx) => (
-            <div key={idx} className="flex items-start gap-3">
-              <div className={`mt-1 w-6 h-6 rounded-full flex items-center justify-center ${step.completed ? 'bg-green-500 text-white' : 'bg-gray-300 text-gray-600'}`}>
-                {step.completed ? <FiCheckCircle size={16} /> : <FiClock size={16} />}
+          {deliverySteps.length === 0 ? (
+            <p className="text-sm text-gray-500">Status not available yet</p>
+          ) : (
+            deliverySteps.map((step, idx) => (
+              <div key={idx} className="flex items-start gap-3">
+                <div
+                  className={`mt-1 w-6 h-6 rounded-full flex items-center justify-center ${
+                    step.completed
+                      ? 'bg-green-500 text-white'
+                      : 'bg-gray-300 text-gray-600'
+                  }`}
+                >
+                  {step.completed ? <FiCheckCircle size={16} /> : <FiClock size={16} />}
+                </div>
+
+                <div className="flex-1">
+                  <div className="font-medium capitalize">{step.step}</div>
+
+                  {step.date && (
+                    <div className="text-xs text-gray-500">
+                      {dayjs(step.date).format('MMM DD, YYYY hh:mm A')}
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="flex-1">
-                <div className="font-medium capitalize">{step.step}</div>
-                {step.date && (
-                  <div className="text-xs text-gray-500">{dayjs(step.date).format('MMM DD, YYYY hh:mm A')}</div>
-                )}
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
 
       {/* Order Items */}
       <div className="bg-white dark:bg-gray-800 p-4 rounded mb-4">
         <h3 className="font-semibold mb-3">Items Ordered</h3>
+
         <div className="space-y-2">
-          {order.items.map(item => (
-            <div key={item.id} className="flex justify-between text-sm pb-2 border-b last:border-0">
+          {order.items?.map((item) => (
+            <div
+              key={item.id}
+              className="flex justify-between text-sm pb-2 border-b last:border-0"
+            >
               <div>
                 <div className="font-medium">{item.name}</div>
-                <div className="text-xs text-gray-500">Size: {item.size} | Qty: {item.qty || 1}</div>
+                <div className="text-xs text-gray-500">
+                  Size: {item.size} | Qty: {item.qty || 1}
+                </div>
               </div>
-              <div className="font-medium">${(item.price * (item.qty || 1)).toFixed(2)}</div>
+
+              <div className="font-medium">
+                ${(item.price * (item.qty || 1)).toFixed(2)}
+              </div>
             </div>
           ))}
         </div>
@@ -84,10 +113,12 @@ export default function OrderTracking() {
           <span>Subtotal:</span>
           <span>${order.total.toFixed(2)}</span>
         </div>
+
         <div className="flex justify-between text-sm mb-2">
           <span>Shipping:</span>
           <span>Free</span>
         </div>
+
         <div className="border-t pt-2 flex justify-between font-semibold">
           <span>Total:</span>
           <span>${order.total.toFixed(2)}</span>
