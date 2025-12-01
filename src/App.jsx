@@ -24,7 +24,6 @@ function App() {
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    // start Firestore products subscription
     try {
       useProductStore.getState().subscribeToProducts()
     } catch (e) {
@@ -36,21 +35,17 @@ function App() {
   }, [])
 
   useEffect(() => {
-    // Error boundary for uncaught errors
     const handleError = (event) => {
       console.error('Global error:', event.error)
       setError(`Error: ${event.error?.message || 'Unknown error'}`)
     }
-
     window.addEventListener('error', handleError)
 
-    // Prevent rubber band scrolling on iOS - only on non-scrollable elements
     const handleTouchMove = (e) => {
       if (!e.target.closest('.scrollable')) {
         e.preventDefault()
       }
     }
-
     document.addEventListener('touchmove', handleTouchMove, { passive: false })
 
     return () => {
@@ -70,7 +65,7 @@ function App() {
             <button
               onClick={() => {
                 setError(null)
-                window.location.href = '/'
+                window.location.href = '/crody-react/'
               }}
               className="px-4 py-2 bg-white text-gray-900 rounded hover:bg-gray-100"
             >
@@ -84,10 +79,11 @@ function App() {
   }
 
   return (
-    <Router>
+    <Router basename="/crody-react">
       <div className="flex flex-col h-screen bg-white text-gray-900 overflow-hidden">
         <Header onCartClick={() => setCartOpen(true)} />
         <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+
         <main className="flex-1 overflow-y-auto scrollable">
           <Routes>
             <Route path="/" element={<Home />} />
@@ -105,6 +101,7 @@ function App() {
             <Route path="/admin/edit-product/:id" element={<AdminEditProduct />} />
           </Routes>
         </main>
+
         <BottomNav />
       </div>
     </Router>
@@ -112,4 +109,3 @@ function App() {
 }
 
 export default App
-
