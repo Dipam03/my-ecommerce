@@ -4,6 +4,9 @@ import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth } from '../firebase'
 import { FiStar } from 'react-icons/fi'
 import dayjs from 'dayjs'
+import relativeTime from 'dayjs/plugin/relativeTime'
+
+dayjs.extend(relativeTime)
 
 export default function ReviewSection({ productId }) {
   const [user] = useAuthState(auth)
