@@ -7,8 +7,14 @@ import dayjs from 'dayjs'
 import { useEffect } from 'react'
 
 export default function Orders() {
-  const { orders, fetchOrders, loading, error, cancelOrder } = useOrderStore()
+  const { orders, fetchOrders, loading, error, cancelOrder, updateStatus } = useOrderStore()
   const [user] = useAuthState(auth)
+
+  // Check if user is admin (via environment variable)
+  const isAdmin = !!(user && (
+    (import.meta.env.VITE_ADMIN_UID && user.uid === import.meta.env.VITE_ADMIN_UID) ||
+    (import.meta.env.VITE_ADMIN_EMAIL && user.email === import.meta.env.VITE_ADMIN_EMAIL)
+  ))
 
   useEffect(() => {
     if (user) {
@@ -69,20 +75,45 @@ export default function Orders() {
                 <div className="font-medium">₹{order.total.toFixed(0)}</div>
               </div>
 
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2">
                 <Link
                   to={`/order/${order.id}`}
-                  className="flex-1 flex items-center justify-center gap-2 py-2 bg-white text-gray-900 rounded text-sm hover:bg-gray-100"
+                  className="flex-1 flex items-center justify-center gap-2 py-2 bg-white text-gray-900 rounded text-sm hover:bg-gray-100 border"
                 >
                   <FiEye size={16} /> Track
                 </Link>
-                {order.status === 'confirmed' && (
-                  <button
-                    onClick={() => cancelOrder(order.id)}
-                    className="flex-1 flex items-center justify-center gap-2 py-2 border border-gray-200 text-gray-900 rounded text-sm hover:bg-gray-50"
-                  >
-                    <FiTrash2 size={16} /> Cancel
-                  </button>
+
+                {isAdmin ? (
+                  <>
+                    <select
+                      value={order.status}
+                      onChange={(e) => updateStatus(order.id, e.target.value)}
+                      className="flex-1 p-2 border rounded text-sm font-medium"
+                    >
+                      <option value="confirmed">Confirmed</option>
+                      <option value="processing">Processing</option>
+                      <option value="shipped">Shipped</option>
+                      <option value="delivered">Delivered</option>
+                      <option value="cancelled">Cancelled</option>
+                    </select>
+
+                    <button
+                      onClick={() => cancelOrder(order.id)}
+                      className="px-3 py-2 border rounded text-sm hover:bg-red-50"
+                      title="Cancel order"
+                    >
+                      <FiTrash2 size={16} />
+                    </button>
+                  </>
+                ) : (
+                  order.status === 'confirmed' && (
+                    <button
+                      onClick={() => cancelOrder(order.id)}
+                      className="flex-1 flex items-center justify-center gap-2 py-2 border border-gray-200 text-gray-900 rounded text-sm hover:bg-gray-50"
+                    >
+                      <FiTrash2 size={16} /> Cancel
+                    </button>
+                  )
                 )}
               </div>
             </div>
