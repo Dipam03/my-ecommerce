@@ -13,9 +13,9 @@
   -webkit-text-size-adjust: 100%;
   
   /* Ambient color palette */
-  --color-primary: #dc2626;
-  --color-primary-light: #fee2e2;
-  --color-primary-dark: #7f1d1d;
+  --color-primary: #ea580c;
+  --color-primary-light: #fed7aa;
+  --color-primary-dark: #9a2409;
   --color-accent: #16a34a;
   --color-accent-light: #dcfce7;
   --color-neutral: #f3f4f6;
@@ -106,10 +106,10 @@ body {
 
 @keyframes glow {
   0%, 100% {
-    box-shadow: 0 0 5px rgba(220, 38, 38, 0.3);
+    box-shadow: 0 0 5px rgba(234, 88, 12, 0.3);
   }
   50% {
-    box-shadow: 0 0 20px rgba(220, 38, 38, 0.6);
+    box-shadow: 0 0 20px rgba(234, 88, 12, 0.6);
   }
 }
 
@@ -175,7 +175,7 @@ body {
 
 /* Custom Components with Enhanced Colors */
 .btn-primary {
-  @apply px-4 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg font-semibold transition-all hover:shadow-lg hover:shadow-red-200 active:scale-95 min-h-[48px] flex items-center justify-center;
+  @apply px-4 py-3 bg-gradient-to-r from-orange-600 to-orange-700 text-white rounded-lg font-semibold transition-all hover:shadow-lg hover:shadow-orange-200 active:scale-95 min-h-[48px] flex items-center justify-center;
 }
 
 .btn-primary:hover {
@@ -187,7 +187,7 @@ body {
 }
 
 .btn-success {
-  @apply px-4 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg font-semibold transition-all hover:shadow-lg hover:shadow-green-200 active:scale-95 min-h-[48px] flex items-center justify-center;
+  @apply px-4 py-3 bg-gradient-to-r from-orange-600 to-orange-700 text-white rounded-lg font-semibold transition-all hover:shadow-lg hover:shadow-orange-200 active:scale-95 min-h-[48px] flex items-center justify-center;
 }
 
 .btn-success:hover {
@@ -217,7 +217,7 @@ body {
 
 /* Badge Styles with Colors */
 .badge-primary {
-  @apply inline-flex items-center px-3 py-1 bg-gradient-to-r from-red-100 to-red-50 text-red-700 rounded-full text-sm font-semibold;
+  @apply inline-flex items-center px-3 py-1 bg-gradient-to-r from-orange-100 to-orange-50 text-orange-700 rounded-full text-sm font-semibold;
 }
 
 .badge-success {
@@ -348,7 +348,7 @@ a {
 
 /* Gradient text */
 .gradient-text-primary {
-  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+  background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -464,7 +464,7 @@ a {
 
 /* Colored shadow effects */
 .shadow-primary {
-  box-shadow: 0 10px 30px rgba(220, 38, 38, 0.2);
+  box-shadow: 0 10px 30px rgba(234, 88, 12, 0.2);
 }
 
 .shadow-success {

@@ -148,7 +148,7 @@ export default function ProductDetails(){
         <div className="flex gap-2">
           <button 
             onClick={onToggleWishlist}
-            className={`p-2 rounded border ${isWishlisted ? 'bg-red-50 text-red-500 border-red-300' : ''}`}
+            className={`p-2 rounded border ${isWishlisted ? 'bg-orange-50 text-orange-500 border-orange-300' : ''}`}
           >
             <FiHeart fill={isWishlisted ? 'currentColor' : 'none'} />
           </button>

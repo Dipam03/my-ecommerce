@@ -23,7 +23,7 @@ export default function Header({ onCartClick }) {
   }
 
   return (
-    <header className="w-full bg-gradient-to-r from-red-600 to-red-700 border-b border-red-800 px-3 sm:px-4 py-3 sticky top-0 z-20 shadow-lg">
+    <header className="w-full bg-gradient-to-r from-orange-600 to-orange-700 border-b border-orange-800 px-3 sm:px-4 py-3 sticky top-0 z-20 shadow-lg">
       <div className="max-w-4xl mx-auto">
         {/* Desktop view */}
         <div className="hidden sm:flex items-center gap-3">
@@ -46,7 +46,7 @@ export default function Header({ onCartClick }) {
           </form>
 
           <div className="flex items-center gap-3">
-            <button onClick={onCartClick} className="relative text-white hover:bg-red-500 p-2 rounded-lg transition-all" aria-label="cart">
+            <button onClick={onCartClick} className="relative text-white hover:bg-orange-500 p-2 rounded-lg transition-all" aria-label="cart">
               <FiShoppingCart size={20} />
               {total > 0 && (
                 <span className="absolute -top-2 -right-2 bg-yellow-400 text-red-700 text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold animate-glow">{total}</span>
@@ -56,10 +56,10 @@ export default function Header({ onCartClick }) {
             {user ? (
               <div className="flex items-center gap-2">
                 <span className="text-sm text-white">{user.displayName || user.email.substring(0, 10)}</span>
-                <button onClick={onLogout} className="px-3 py-1 text-sm border border-red-200 text-white rounded-lg hover:bg-red-500 transition-all font-medium">Logout</button>
+                <button onClick={onLogout} className="px-3 py-1 text-sm border border-orange-200 text-white rounded-lg hover:bg-orange-500 transition-all font-medium">Logout</button>
               </div>
             ) : (
-              <Link to="/login" className="px-3 py-1 text-sm border border-red-200 text-white rounded-lg hover:bg-red-500 transition-all font-medium">Login</Link>
+              <Link to="/login" className="px-3 py-1 text-sm border border-orange-200 text-white rounded-lg hover:bg-orange-500 transition-all font-medium">Login</Link>
             )}
           </div>
         </div>
@@ -71,7 +71,7 @@ export default function Header({ onCartClick }) {
           </Link>
 
           <div className="flex items-center gap-2">
-            <button onClick={onCartClick} className="relative p-2 text-white hover:bg-red-500 rounded-lg transition-all" aria-label="cart">
+            <button onClick={onCartClick} className="relative p-2 text-white hover:bg-orange-500 rounded-lg transition-all" aria-label="cart">
               <FiShoppingCart size={20} />
               {total > 0 && (
                 <span className="absolute top-0 right-0 bg-yellow-400 text-red-700 text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold animate-glow">{total}</span>

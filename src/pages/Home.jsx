@@ -68,7 +68,7 @@ export default function Home() {
       <section className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg sm:text-xl font-semibold text-gray-900 animate-slideInLeft">Featured Products</h2>
-          <Link to="/products" className="text-sm font-medium text-red-600 hover:text-red-700 hover:translate-x-1 transition-all">View all →</Link>
+          <Link to="/products" className="text-sm font-medium text-orange-600 hover:text-orange-700 hover:translate-x-1 transition-all">View all →</Link>
         </div>
 
         {featuredProducts.length === 0 ? (
@@ -84,19 +84,19 @@ export default function Home() {
                   <Link to={`/product/${p.id}`} className="block h-24 sm:h-32 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center font-bold text-gray-400 overflow-hidden relative hover:scale-110 transition-transform">
                     {p.image ? <img src={p.image} alt={p.name} className="w-full h-full object-cover" /> : 'Image'}
                     {p.discount && (
-                      <div className="absolute top-1 right-1 bg-gradient-to-r from-red-600 to-red-700 text-white text-xs font-bold px-1.5 py-0.5 rounded-full shadow-lg animate-bounce-gentle">{p.discount}%</div>
+                      <div className="absolute top-1 right-1 bg-gradient-to-r from-orange-600 to-orange-700 text-white text-xs font-bold px-1.5 py-0.5 rounded-full shadow-lg animate-bounce-gentle">{p.discount}%</div>
                     )}
                   </Link>
                   <div className="p-2 sm:p-3">
-                    <Link to={`/product/${p.id}`} className="text-sm sm:text-base font-medium text-gray-900 truncate hover:text-red-600 transition-colors block">{p.name}</Link>
-                    <div className="text-xs sm:text-sm text-red-600 font-bold mt-1">₹{p.price}</div>
+                    <Link to={`/product/${p.id}`} className="text-sm sm:text-base font-medium text-gray-900 truncate hover:text-orange-600 transition-colors block">{p.name}</Link>
+                    <div className="text-xs sm:text-sm text-orange-600 font-bold mt-1">₹{p.price}</div>
                     <div className="text-xs text-gray-400 mt-1">★★★★☆ (42)</div>
                     
                     {/* Action Buttons */}
                     <div className="flex gap-1 sm:gap-2 mt-2">
                       <button
                         onClick={(e) => handleAddToCart(e, p)}
-                        className="flex-1 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white text-xs sm:text-sm font-medium py-1.5 rounded transition-all flex items-center justify-center gap-1 hover:shadow-lg hover:shadow-red-200"
+                        className="flex-1 bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white text-xs sm:text-sm font-medium py-1.5 rounded transition-all flex items-center justify-center gap-1 hover:shadow-lg hover:shadow-orange-200"
                       >
                         <FiShoppingCart size={14} className="hidden sm:block" />
                         <span className="text-xs sm:text-sm">Add</span>
@@ -104,9 +104,9 @@ export default function Home() {
                       <button
                         onClick={(e) => handleWishlistToggle(e, p)}
                         disabled={actionLoading === `wishlist-${p.id}`}
-                        className={`px-2 py-1.5 rounded transition-all hover:scale-110 ${isWishlisted_ ? 'bg-gradient-to-r from-red-100 to-red-50 shadow-md' : 'bg-gray-100 hover:bg-gray-200'}`}
+                        className={`px-2 py-1.5 rounded transition-all hover:scale-110 ${isWishlisted_ ? 'bg-gradient-to-r from-orange-100 to-orange-50 shadow-md' : 'bg-gray-100 hover:bg-gray-200'}`}
                       >
-                        <FiHeart size={16} className={isWishlisted_ ? 'text-red-600 fill-current animate-glow' : 'text-gray-600'} />
+                        <FiHeart size={16} className={isWishlisted_ ? 'text-orange-600 fill-current animate-glow' : 'text-gray-600'} />
                       </button>
                       <button
                         onClick={(e) => handleBuyNow(e, p)}
