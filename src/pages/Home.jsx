@@ -10,7 +10,7 @@ import { FiShoppingCart, FiHeart } from 'react-icons/fi'
 export default function Home() {
   const navigate = useNavigate()
   const { products } = useProductStore()
-  const { addToCart } = useCartStore()
+  const { addItem: addToCart } = useCartStore()
   const { addItem, removeItem, isWishlisted } = useWishlistStore()
   const [actionLoading, setActionLoading] = useState(null)
   

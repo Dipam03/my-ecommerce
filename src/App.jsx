@@ -57,7 +57,6 @@ function App() {
   if (error) {
     return (
       <div className="flex flex-col h-screen bg-white text-gray-900 overflow-hidden">
-        <Header onCartClick={() => setCartOpen(true)} />
         <main className="flex-1 overflow-y-auto flex items-center justify-center">
           <div className="text-center p-8">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Something went wrong</h1>
@@ -73,7 +72,6 @@ function App() {
             </button>
           </div>
         </main>
-        <BottomNav />
       </div>
     )
   }
