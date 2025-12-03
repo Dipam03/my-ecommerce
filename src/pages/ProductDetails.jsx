@@ -1,10 +1,10 @@
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useCartStore } from '../store/cartStore'
 import { useWishlistStore } from '../store/wishlistStore'
 import ReviewSection from '../components/ReviewSection'
 import ImageLightbox from '../components/ImageLightbox'
 import { FiHeart, FiShare2 } from 'react-icons/fi'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth } from '../firebase'
 import { useProductStore } from '../store/productStore'
@@ -134,18 +134,11 @@ export default function ProductDetails(){
           ))}
         </div>
       )}
-      {/* Edit image (visible to signed-in users) */}
-      {user && (
-        <div className="mb-4">
-          <button onClick={onEditImage} className="text-sm px-3 py-1 border rounded bg-white hover:bg-gray-50">
-            Edit Image
-          </button>
-        </div>
-      )}
       
       <div className="flex justify-between items-start mb-2">
         <div>
           <h1 className="text-2xl font-semibold">{product.name}</h1>
+          {product.category && <div className="text-sm text-gray-500">{product.category}</div>}
           <div className="text-sm text-gray-500">★ {product.rating} ({product.reviews} reviews)</div>
         </div>
         <div className="flex gap-2">
@@ -164,7 +157,15 @@ export default function ProductDetails(){
         </div>
       </div>
 
-      <p className="text-2xl font-bold mb-4">${product.price}</p>
+      <p className="text-2xl font-bold mb-4">₹{product.price}</p>
+
+      {/* Product Description */}
+      {product.description && (
+        <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded mb-4">
+          <h3 className="font-semibold text-sm mb-2">Description</h3>
+          <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{product.description}</p>
+        </div>
+      )}
 
       <div className="space-y-4 mb-4">
         <div>
@@ -214,7 +215,48 @@ export default function ProductDetails(){
 
       {/* Reviews Section */}
       <ReviewSection productId={id} />
+
+      {/* Related Products (Same Category) */}
+      {product.category && (
+        <RelatedProducts category={product.category} currentProductId={id} />
+      )}
     </div>
   )
 }
+
+// Related Products Component
+function RelatedProducts({ category, currentProductId }) {
+  const { products } = useProductStore()
+  
+  const relatedProducts = useMemo(() => {
+    return products
+      .filter(p => p.category === category && p.id !== currentProductId)
+      .slice(0, 6)
+  }, [products, category, currentProductId])
+
+  if (relatedProducts.length === 0) return null
+
+  return (
+    <div className="mt-8 border-t pt-6">
+      <h3 className="text-xl font-semibold mb-4">More from {category}</h3>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+        {relatedProducts.map(p => (
+          <Link to={`/product/${p.id}`} key={p.id} className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden group">
+            <div className="h-24 sm:h-28 bg-gray-100 flex items-center justify-center overflow-hidden">
+              {p.image ? (
+                <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+              ) : (
+                'Image'
+              )}
+            </div>
+            <div className="p-2 sm:p-3">
+              <div className="text-sm font-medium text-gray-900 truncate">{p.name}</div>
+              <div className="text-sm text-red-600 font-semibold mt-1">₹{p.price}</div>
+              <div className="text-xs text-gray-500 mt-1">★ {(p.rating || 4.5).toFixed(1)}</div>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </div>
+  )
 

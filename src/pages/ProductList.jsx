@@ -1,11 +1,16 @@
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { useProductStore } from '../store/productStore'
+import { useCartStore } from '../store/cartStore'
+import { useWishlistStore } from '../store/wishlistStore'
 import { useMemo, useState } from 'react'
-import { FiFilter, FiX } from 'react-icons/fi'
+import { FiFilter, FiX, FiHeart, FiShoppingCart } from 'react-icons/fi'
 
 export default function ProductList(){
   const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
   const { products } = useProductStore()
+  const { addItem: addToCart } = useCartStore()
+  const { addItem: addToWishlist, isWishlisted, removeItem: removeFromWishlist } = useWishlistStore()
   const query = searchParams.get('q') || ''
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [priceRange, setPriceRange] = useState({ min: 0, max: 100000 })
@@ -158,26 +163,93 @@ export default function ProductList(){
         ) : (
           <div className="flex-1">
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
-              {filteredProducts.map(p=> (
-                <Link to={`/product/${p.id}`} key={p.id} className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden group">
-                  <div className="h-24 sm:h-32 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center font-bold text-gray-400 group-hover:from-gray-200 group-hover:to-gray-300 transition-colors overflow-hidden relative">
-                    {p.image ? <img src={p.image} alt={p.name} className="w-full h-full object-cover" /> : 'Image'}
-                    {p.discount && (
-                      <div className="absolute top-1 right-1 bg-red-500 text-white text-xs px-2 py-1 rounded">
-                        {p.discount}% OFF
+              {filteredProducts.map(p => {
+                const isLiked = isWishlisted(p.id)
+                const handleWishlistToggle = (e) => {
+                  e.preventDefault()
+                  if (isLiked) {
+                    removeFromWishlist(p.id)
+                  } else {
+                    addToWishlist(p)
+                  }
+                }
+                const handleAddToCart = (e) => {
+                  e.preventDefault()
+                  addToCart({ ...p, qty: 1, size: 'M' })
+                }
+                const handleBuyNow = (e) => {
+                  e.preventDefault()
+                  addToCart({ ...p, qty: 1, size: 'M' })
+                  navigate('/checkout')
+                }
+
+                return (
+                  <div key={p.id} className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden group">
+                    {/* Product Image */}
+                    <Link to={`/product/${p.id}`} className="block relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 h-24 sm:h-32">
+                      {p.image ? (
+                        <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center font-bold text-gray-400">Image</div>
+                      )}
+                      {p.discount && (
+                        <div className="absolute top-1 right-1 bg-red-500 text-white text-xs px-2 py-1 rounded">
+                          {p.discount}% OFF
+                        </div>
+                      )}
+                    </Link>
+
+                    {/* Product Info */}
+                    <div className="p-2 sm:p-3">
+                      <Link to={`/product/${p.id}`} className="block mb-2">
+                        <div className="text-sm sm:text-base font-medium text-gray-900 truncate hover:text-red-600">{p.name}</div>
+                        {p.category && <div className="text-xs text-gray-500">{p.category}</div>}
+                        <div className="flex items-center justify-between mt-1">
+                          <div className="text-xs sm:text-sm text-red-600 font-semibold">₹{p.price}</div>
+                          <div className="text-xs text-gray-400">★ {(p.rating || 4.5).toFixed(1)}</div>
+                        </div>
+                      </Link>
+
+                      {/* Action Buttons */}
+                      <div className="flex gap-1 sm:gap-2 mt-2">
+                        {/* Add to Cart */}
+                        <button
+                          onClick={handleAddToCart}
+                          className="flex-1 flex items-center justify-center gap-1 py-1.5 bg-red-50 text-red-600 rounded text-xs font-medium hover:bg-red-100 transition"
+                          title="Add to cart"
+                        >
+                          <FiShoppingCart size={14} />
+                          <span className="hidden sm:inline">Cart</span>
+                        </button>
+
+                        {/* Wishlist */}
+                        <button
+                          onClick={handleWishlistToggle}
+                          className={`flex-1 flex items-center justify-center gap-1 py-1.5 rounded text-xs font-medium transition ${
+                            isLiked
+                              ? 'bg-red-100 text-red-600 hover:bg-red-200'
+                              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                          }`}
+                          title={isLiked ? 'Remove from wishlist' : 'Add to wishlist'}
+                        >
+                          <FiHeart size={14} fill={isLiked ? 'currentColor' : 'none'} />
+                          <span className="hidden sm:inline">Wish</span>
+                        </button>
+
+                        {/* Buy Now */}
+                        <button
+                          onClick={handleBuyNow}
+                          className="flex-1 flex items-center justify-center gap-1 py-1.5 bg-green-600 text-white rounded text-xs font-medium hover:bg-green-700 transition"
+                          title="Buy now"
+                        >
+                          <span className="hidden sm:inline">Buy</span>
+                          <span className="sm:hidden">→</span>
+                        </button>
                       </div>
-                    )}
-                  </div>
-                  <div className="p-2 sm:p-3">
-                    <div className="text-sm sm:text-base font-medium text-gray-900 truncate">{p.name}</div>
-                    {p.category && <div className="text-xs text-gray-500">{p.category}</div>}
-                    <div className="flex items-center justify-between mt-1">
-                      <div className="text-xs sm:text-sm text-red-600 font-semibold">₹{p.price}</div>
-                      <div className="text-xs text-gray-400">★ {(p.rating || 4.5).toFixed(1)}</div>
                     </div>
                   </div>
-                </Link>
-              ))}
+                )
+              })}
             </div>
           </div>
         )}
