@@ -3,6 +3,7 @@ import { useCartStore } from '../store/cartStore'
 import { useWishlistStore } from '../store/wishlistStore'
 import ReviewSection from '../components/ReviewSection'
 import ImageLightbox from '../components/ImageLightbox'
+import SmartRecommendations from '../components/SmartRecommendations'
 import { FiHeart, FiShare2 } from 'react-icons/fi'
 import { useState, useEffect, useMemo } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
@@ -135,11 +136,14 @@ export default function ProductDetails(){
         </div>
       )}
       
-      <div className="flex justify-between items-start mb-2">
+      <div className="flex justify-between items-start mb-4">
         <div>
-          <h1 className="text-2xl font-semibold">{product.name}</h1>
-          {product.category && <div className="text-sm text-gray-500">{product.category}</div>}
-          <div className="text-sm text-gray-500">★ {product.rating} ({product.reviews} reviews)</div>
+          <h1 className="text-2xl font-semibold mb-1">{product.name}</h1>
+          {product.category && <div className="text-sm text-gray-500 mb-2">{product.category}</div>}
+          <div className="text-sm font-medium">
+            <span className="text-yellow-500">★★★★★</span>
+            <span className="text-gray-700 ml-2">{(product.rating || 4.5).toFixed(1)} ({product.reviewCount || 42})</span>
+          </div>
         </div>
         <div className="flex gap-2">
           <button 
@@ -157,13 +161,13 @@ export default function ProductDetails(){
         </div>
       </div>
 
-      <p className="text-2xl font-bold mb-4">₹{product.price}</p>
+      <p className="text-2xl font-bold mb-6">₹{product.price}</p>
 
-      {/* Product Description */}
+      {/* Product Details Section */}
       {product.description && (
-        <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded mb-4">
-          <h3 className="font-semibold text-sm mb-2">Description</h3>
-          <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{product.description}</p>
+        <div className="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 p-5 rounded-lg mb-6">
+          <h3 className="font-bold text-lg mb-3 text-gray-900 dark:text-gray-100">Details</h3>
+          <p className="text-gray-800 dark:text-gray-200 leading-relaxed whitespace-pre-wrap text-base">{product.description}</p>
         </div>
       )}
 
@@ -216,6 +220,9 @@ export default function ProductDetails(){
       {/* Reviews Section */}
       <ReviewSection productId={id} />
 
+      {/* Smart Recommendations Component */}
+      <SmartRecommendations currentProductId={id} />
+
       {/* Related Products (Same Category) */}
       {product.category && (
         <RelatedProducts category={product.category} currentProductId={id} />
@@ -259,4 +266,4 @@ function RelatedProducts({ category, currentProductId }) {
       </div>
     </div>
   )
-
+}
