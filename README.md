@@ -133,9 +133,41 @@ npm run build
 
 This creates an optimized `dist/` folder ready for deployment.
 
-### Deploy options
+### Automatic Deployment to GitHub Pages
 
-**Vercel** (Recommended)
+This project is configured with GitHub Actions to automatically build and deploy to GitHub Pages on every push to `main`.
+
+**Setup Steps:**
+
+1. **Configure GitHub Repository Settings**
+   - Go to Settings → Pages
+   - Set Source to "GitHub Actions"
+   - Build will trigger automatically on push
+
+2. **Add Firebase Secrets to GitHub**
+   - Go to Settings → Secrets and variables → Actions
+   - Add each Firebase credential as a secret:
+     - `VITE_FIREBASE_API_KEY`
+     - `VITE_FIREBASE_AUTH_DOMAIN`
+     - `VITE_FIREBASE_PROJECT_ID`
+     - `VITE_FIREBASE_STORAGE_BUCKET`
+     - `VITE_FIREBASE_MESSAGING_SENDER_ID`
+     - `VITE_FIREBASE_APP_ID`
+     - `VITE_FIREBASE_MEASUREMENT_ID`
+
+3. **Push to Main Branch**
+   ```bash
+   git push origin main
+   ```
+
+4. **Watch Deployment**
+   - Go to Actions tab in GitHub
+   - Monitor the "Deploy to GitHub Pages" workflow
+   - App will be live at: `https://Dipam03.github.io/crody-react/`
+
+### Manual Deploy Options
+
+**Vercel** (Recommended for alternative)
 ```bash
 npm i -g vercel
 vercel
