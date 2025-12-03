@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom'
 import { useOrderStore } from '../store/orderStore'
+import ReviewSection from '../components/ReviewSection'
 import { FiCopy, FiCheckCircle, FiClock } from 'react-icons/fi'
 import dayjs from 'dayjs'
 
@@ -108,10 +109,10 @@ export default function OrderTracking() {
       </div>
 
       {/* Order Summary */}
-      <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded">
+      <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded mb-4">
         <div className="flex justify-between text-sm mb-2">
           <span>Subtotal:</span>
-          <span>${order.total.toFixed(2)}</span>
+          <span>₹{order.total.toFixed(0)}</span>
         </div>
 
         <div className="flex justify-between text-sm mb-2">
@@ -121,8 +122,27 @@ export default function OrderTracking() {
 
         <div className="border-t pt-2 flex justify-between font-semibold">
           <span>Total:</span>
-          <span>${order.total.toFixed(2)}</span>
+          <span>₹{order.total.toFixed(0)}</span>
         </div>
+      </div>
+
+      {/* Review Section for Each Product */}
+      <div className="mt-6">
+        <h3 className="text-lg font-semibold mb-4">Rate & Review Products</h3>
+        {order.items?.map(item => (
+          <div key={item.id} className="mb-6 pb-6 border-b last:border-0">
+            <div className="flex gap-3 mb-4">
+              {item.image && (
+                <img src={item.image} alt={item.name} className="w-16 h-16 rounded object-cover" />
+              )}
+              <div>
+                <h4 className="font-medium">{item.name}</h4>
+                <p className="text-sm text-gray-500">Qty: {item.qty || 1}</p>
+              </div>
+            </div>
+            <ReviewSection productId={item.id} showFormOnly={true} />
+          </div>
+        ))}
       </div>
     </div>
   )

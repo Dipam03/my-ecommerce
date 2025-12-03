@@ -68,9 +68,16 @@ export default function Checkout() {
       return
     }
 
-    // For UPI, show scanner instead of direct order
+    // For UPI, payment MUST be completed before placing order
     if (paymentMethod === 'upi') {
       if (!upiPaymentStatus) {
+        setError('Please complete UPI payment to place order')
+        setShowUPIScanner(true)
+        return
+      }
+      if (upiPaymentStatus.status !== 'success') {
+        setError('Payment was not successful. Please try again')
+        setUpiPaymentStatus(null)
         setShowUPIScanner(true)
         return
       }

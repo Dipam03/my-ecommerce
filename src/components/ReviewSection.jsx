@@ -9,10 +9,10 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 
 dayjs.extend(relativeTime)
 
-export default function ReviewSection({ productId }) {
+export default function ReviewSection({ productId, showFormOnly = false }) {
   const [user] = useAuthState(auth)
   const { addReview, getProductReviews, hasUserReviewed, getAverageRating } = useReviewStore()
-  const { items: orders } = useOrderStore()
+  const { orders } = useOrderStore()
 
   const [rating, setRating] = useState(5)
   const [comment, setComment] = useState('')
@@ -41,110 +41,103 @@ export default function ReviewSection({ productId }) {
     setTimeout(() => setSubmitted(false), 3000)
   }
 
+  // If showFormOnly is true, only show the form (for order details page)
+  if (showFormOnly) {
+    return (
+      <div className="bg-white dark:bg-gray-800 p-4 rounded mb-4">
+        {user && hasPurchased && !userHasReviewed ? (
+          <form onSubmit={onSubmit} className="space-y-3">
+            <h4 className="text-sm font-semibold">Write a Review</h4>
+            <div>
+              <label className="block text-xs font-medium mb-2">Rating</label>
+              <div className="flex gap-2">
+                {[1, 2, 3, 4, 5].map(i => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setRating(i)}
+                    className="p-2 transition hover:scale-110"
+                  >
+                    <FiStar
+                      size={20}
+                      fill={i <= rating ? 'currentColor' : 'none'}
+                      className={i <= rating ? 'text-yellow-400' : 'text-gray-300'}
+                    />
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs font-medium mb-2">Comment</label>
+              <textarea
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="Share your experience with this product..."
+                className="w-full p-2 border rounded text-sm"
+                rows={3}
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 transition"
+            >
+              {submitted ? '✓ Review submitted' : 'Submit Review'}
+            </button>
+          </form>
+        ) : userHasReviewed ? (
+          <p className="text-sm text-gray-500">✓ You have already reviewed this product</p>
+        ) : (
+          <p className="text-sm text-gray-500">You can only review products you have purchased</p>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div className="bg-white dark:bg-gray-800 p-4 rounded mb-4 animate-fadeIn">
-      <div className="mb-4">
-        <h3 className="font-semibold mb-2">Ratings & Reviews ({reviews.length})</h3>
-        <div className="flex items-center gap-2">
-          <div className="text-lg font-bold">{avgRating || 'N/A'}</div>
-
+      {/* Rating Summary */}
+      <div className="mb-6 pb-4 border-b">
+        <h3 className="font-semibold mb-3">Ratings & Reviews ({reviews.length})</h3>
+        <div className="flex items-center gap-3">
+          <div className="text-3xl font-bold">{avgRating.toFixed(1)}</div>
           <div className="flex text-yellow-400">
             {[...Array(5)].map((_, i) => (
               <FiStar
                 key={i}
+                size={18}
                 fill={i < Math.round(avgRating) ? 'currentColor' : 'none'}
               />
             ))}
           </div>
+          <div className="text-sm text-gray-500">({reviews.length} reviews)</div>
         </div>
       </div>
 
-      {/* Write Review Form */}
-      {user ? (
-        hasPurchased ? (
-          <form onSubmit={onSubmit} className="mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded">
-            <h4 className="text-sm font-medium mb-2">
-              {userHasReviewed ? '✓ You already reviewed this product' : 'Write a review'}
-            </h4>
-
-            {!userHasReviewed && (
-              <>
-                <div className="mb-2">
-                  <label className="block text-xs font-medium mb-1">Rating</label>
-                  <div className="flex gap-1">
-                    {[1, 2, 3, 4, 5].map(i => (
-                      <button
-                        key={i}
-                        type="button"
-                        onClick={() => setRating(i)}
-                        className="p-1 transition-transform hover:scale-110"
-                      >
-                        <FiStar
-                          size={20}
-                          fill={i <= rating ? '#fbbf24' : 'none'}
-                          stroke={i <= rating ? '#fbbf24' : 'currentColor'}
-                        />
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="mb-2">
-                  <textarea
-                    value={comment}
-                    onChange={(e) => setComment(e.target.value)}
-                    placeholder="Share your experience (optional)"
-                    className="w-full p-2 text-xs border rounded bg-white dark:bg-gray-800"
-                    rows={2}
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full bg-white text-gray-900 py-1 rounded text-xs hover:bg-gray-100 transition-colors"
-                >
-                  {submitted ? '✓ Submitted' : 'Submit Review'}
-                </button>
-              </>
-            )}
-          </form>
-        ) : (
-          <p className="text-xs text-amber-600 mb-4 p-2 bg-amber-50 rounded">
-            💡 You can only review products you've purchased
-          </p>
-        )
+      {/* Reviews List Only - No Form */}
+      {reviews.length === 0 ? (
+        <p className="text-xs text-gray-500">No reviews yet</p>
       ) : (
-        <p className="text-xs text-gray-500 mb-4">
-          <a href="/login" className="text-gray-900 font-medium">Login</a> to write a review
-        </p>
-      )}
-
-      {/* Reviews List */}
-      <div className="space-y-2">
-        {reviews.length === 0 ? (
-          <p className="text-xs text-gray-500">No reviews yet</p>
-        ) : (
-          reviews.map((review, idx) => (
+        <div className="space-y-3">
+          {reviews.map((review, idx) => (
             <div
               key={review.id}
-              className="border-t pt-2 animate-fadeIn"
+              className="border-t pt-3 animate-fadeIn"
               style={{ animationDelay: `${idx * 50}ms` }}
             >
-              <div className="flex justify-between items-start">
+              <div className="flex justify-between items-start mb-1">
                 <div>
-                  <div className="flex gap-1 text-yellow-400 text-xs">
+                  <div className="flex gap-1 text-yellow-400">
                     {[...Array(5)].map((_, i) => (
                       <FiStar
                         key={i}
-                        size={12}
+                        size={14}
                         fill={i < review.rating ? 'currentColor' : 'none'}
                       />
                     ))}
                   </div>
-
-                  <div className="text-xs text-gray-500">
-                    {review.userId === user?.uid && '(Your review)'}
-                  </div>
+                  {review.userId === user?.uid && (
+                    <div className="text-xs text-gray-400 mt-1">(Your review)</div>
+                  )}
                 </div>
 
                 <div className="text-xs text-gray-400">
@@ -153,12 +146,12 @@ export default function ReviewSection({ productId }) {
               </div>
 
               {review.comment && (
-                <p className="text-xs mt-1">{review.comment}</p>
+                <p className="text-sm text-gray-700 mt-2">{review.comment}</p>
               )}
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
