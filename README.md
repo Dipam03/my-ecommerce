@@ -1,5 +1,4 @@
-# DS Mart - Mini Flipkart E-Commerce App
-
+# DS Mart - Mini
 A full-featured e-commerce application built with React, Vite, Firebase, and Tailwind CSS. Features include user authentication, product browsing, shopping cart, wishlist, order tracking, reviews, and an admin panel for product management.
 
 ## 🚀 Features
