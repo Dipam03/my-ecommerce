@@ -164,6 +164,9 @@ This project is configured with GitHub Actions to automatically build and deploy
    - Go to Actions tab in GitHub
    - Monitor the "Deploy to GitHub Pages" workflow
    - App will be live at: `https://Dipam03.github.io/crody-react/`
+    - Go to Actions tab in GitHub
+    - Monitor the "Deploy to GitHub Pages" workflow
+    - App will be live at: `https://Dipam03.github.io/my-ecommerce/`
 
 ### Manual Deploy Options
 
@@ -305,3 +308,5 @@ DS Mart Team
 ---
 
 **Ready to deploy?** Make sure `.env` is configured and run `npm run build` to generate production-ready files.
+#   c r o d y - r e a c t  
+ 

@@ -64,7 +64,7 @@ function App() {
             <button
               onClick={() => {
                 setError(null)
-                window.location.href = '/crody-react/'
+                window.location.href = (import.meta.env.VITE_BASE || '/')
               }}
               className="px-4 py-2 bg-white text-gray-900 rounded hover:bg-gray-100"
             >
@@ -77,7 +77,7 @@ function App() {
   }
 
   return (
-    <Router basename="/crody-react">
+    <Router basename={import.meta.env.VITE_BASE || '/'}>
       <div className="flex flex-col h-screen bg-white text-gray-900 overflow-hidden">
         <Header onCartClick={() => setCartOpen(true)} />
         <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
