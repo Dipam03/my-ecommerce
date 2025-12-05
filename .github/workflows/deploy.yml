@@ -26,7 +26,7 @@ jobs:
       if: github.event_name == 'push'
       run: |
         cat > .env.production <<EOF
-        VITE_BASE=/
+        VITE_BASE=/crody-react/
         VITE_FIREBASE_API_KEY=${{ secrets.VITE_FIREBASE_API_KEY }}
         VITE_FIREBASE_AUTH_DOMAIN=${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
         VITE_FIREBASE_PROJECT_ID=${{ secrets.VITE_FIREBASE_PROJECT_ID }}
@@ -45,4 +45,3 @@ jobs:
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./dist
-        cname: crodyapp.com
