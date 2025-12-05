@@ -4,5 +4,5 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: process.env.VITE_BASE || '/crody-react/', // Allow override via env; default to repo path
+  base: process.env.VITE_BASE || '/my-ecommerce/', // Allow override via env; default to repo path
 })
