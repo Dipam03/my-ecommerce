@@ -16,6 +16,7 @@ import AdminProducts from './pages/AdminProducts'
 import AdminAddProduct from './pages/AdminAddProduct'
 import AdminEditProduct from './pages/AdminEditProduct'
 import Account from './pages/Account'
+import NotFound from './pages/NotFound'
 import { useProductStore } from './store/productStore'
 import './App.css'
 
@@ -64,7 +65,7 @@ function App() {
             <button
               onClick={() => {
                 setError(null)
-                window.location.href = (import.meta.env.VITE_BASE || '/')
+                window.location.href = (import.meta.env.VITE_BASE || '/my-ecommerce/')
               }}
               className="px-4 py-2 bg-white text-gray-900 rounded hover:bg-gray-100"
             >
@@ -77,7 +78,7 @@ function App() {
   }
 
   return (
-    <Router basename={import.meta.env.VITE_BASE || '/'}>
+    <Router basename={import.meta.env.VITE_BASE || '/my-ecommerce/'}>
       <div className="flex flex-col h-screen bg-white text-gray-900 overflow-hidden">
         <Header onCartClick={() => setCartOpen(true)} />
         <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />

@@ -26,15 +26,15 @@ export default function ProductDetails(){
 
   // Try to read product from product store (Firestore). Fallback to sample product.
   const storeProduct = getProduct(id)
-  const product = storeProduct || { id, name: `Product ${id}`, price: Number(id)*10, rating: 4.5, reviews: 120, image: `https://via.placeholder.com/500x500?text=Product+${id}+Image` }
+  const product = storeProduct || { id, name: `Product ${id}`, price: Number(id)*10, rating: 4.5, reviews: 120, image: `https://picsum.photos/500/500?random=${id}` }
 
   // Build images array
   const productImages = (product.images && product.images.length)
     ? product.images
     : (product.image ? [product.image] : [
-      `https://via.placeholder.com/500x500?text=Product+${id}+Image+1`,
-      `https://via.placeholder.com/500x500?text=Product+${id}+Image+2`,
-      `https://via.placeholder.com/500x500?text=Product+${id}+Image+3`,
+      `https://picsum.photos/500/500?random=${id}1`,
+      `https://picsum.photos/500/500?random=${id}2`,
+      `https://picsum.photos/500/500?random=${id}3`,
     ])
 
   const isWishlisted = wishlistItems.some(p => p.id === id)
