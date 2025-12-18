@@ -33,7 +33,7 @@ export default function OrderTracking() {
           <h1 className="text-2xl font-semibold">Order Details</h1>
           <button
             onClick={onCopyOrderId}
-            className="flex items-center gap-1 px-2 py-1 text-sm bg-gray-100 dark:bg-gray-800 rounded"
+            className="flex items-center gap-1 px-2 py-1 text-sm bg-gray-100 dark:bg-white-800 rounded"
             title="Copy order ID"
           >
             <FiCopy size={14} /> {order.id}
@@ -42,7 +42,7 @@ export default function OrderTracking() {
       </div>
 
       {/* Delivery Timeline */}
-      <div className="bg-white dark:bg-gray-800 p-4 rounded mb-4">
+      <div className="bg-white dark:bg-gray-800 p-4 rounded mb-4 border-b">
         <h3 className="font-semibold mb-4">Delivery Status</h3>
 
         <div className="space-y-3">
@@ -55,7 +55,7 @@ export default function OrderTracking() {
                   className={`mt-1 w-6 h-6 rounded-full flex items-center justify-center ${
                     step.completed
                       ? 'bg-green-500 text-white'
-                      : 'bg-gray-300 text-gray-600'
+                      : 'bg-white text-gray-600 border'
                   }`}
                 >
                   {step.completed ? <FiCheckCircle size={16} /> : <FiClock size={16} />}
@@ -77,7 +77,7 @@ export default function OrderTracking() {
       </div>
 
       {/* Order Items */}
-      <div className="bg-white dark:bg-gray-800 p-4 rounded mb-4">
+      <div className="bg-white dark:bg-white-800 p-4 rounded mb-4">
         <h3 className="font-semibold mb-3">Items Ordered</h3>
 
         <div className="space-y-2">
@@ -137,7 +137,7 @@ export default function OrderTracking() {
               )}
               <div>
                 <h4 className="font-medium">{item.name}</h4>
-                <p className="text-sm text-gray-500">Qty: {item.qty || 1}</p>
+                <p className="text-sm text-orange-500">Qty: {item.qty || 1}</p>
               </div>
             </div>
             <ReviewSection productId={item.id} showFormOnly={true} />

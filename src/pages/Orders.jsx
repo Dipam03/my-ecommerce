@@ -59,13 +59,20 @@ export default function Orders() {
       ) : (
         <div className="space-y-3">
           {orders.map(order => (
-            <div key={order.id} className="bg-white dark:bg-gray-800 p-4 rounded border">
+            <div key={order.id} className="bg-white dark:bg-white-800 p-4 rounded border">
               <div className="flex justify-between items-start mb-2">
                 <div>
                   <div className="font-semibold">{order.id}</div>
                   <div className="text-xs text-gray-500">{dayjs(order.createdAt).format('MMM DD, YYYY')}</div>
                 </div>
-                <div className={`text-sm px-2 py-1 rounded ${order.status === 'confirmed' ? 'bg-gray-100 text-gray-900' : order.status === 'shipped' ? 'bg-purple-100 text-purple-700' : order.status === 'delivered' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-900'}`}>
+                <div className={`text-sm px-2 py-1 rounded ${
+                  order.status === 'confirmed' ? 'bg-blue-100 text-blue-800' :
+                  order.status === 'processing' ? 'bg-yellow-100 text-yellow-800' :
+                  order.status === 'shipped' ? 'bg-orange-100 text-orange-800' :
+                  order.status === 'delivered' ? 'bg-green-100 text-green-700' :
+                  order.status === 'cancelled' ? 'bg-red-100 text-red-800' :
+                  'bg-gray-100 text-gray-900'
+                }`}>
                   {order.status.toUpperCase()}
                 </div>
               </div>
@@ -78,7 +85,7 @@ export default function Orders() {
               <div className="flex flex-col sm:flex-row gap-2">
                 <Link
                   to={`/order/${order.id}`}
-                  className="flex-1 flex items-center justify-center gap-2 py-2 bg-white text-gray-900 rounded text-sm hover:bg-gray-100 border"
+                  className="flex-1 flex items-center justify-center gap-2 py-2 bg-yellow-400 text-black rounded text-sm hover:bg-yellow-500 border-2 border-yellow-600"
                 >
                   <FiEye size={16} /> Track
                 </Link>
@@ -109,7 +116,7 @@ export default function Orders() {
                   order.status === 'confirmed' && (
                     <button
                       onClick={() => cancelOrder(order.id)}
-                      className="flex-1 flex items-center justify-center gap-2 py-2 border border-gray-200 text-gray-900 rounded text-sm hover:bg-gray-50"
+                      className="flex-1 flex items-center justify-center gap-2 py-2 bg-yellow-100 text-yellow-800 rounded text-sm hover:bg-yellow-200 border"
                     >
                       <FiTrash2 size={16} /> Cancel
                     </button>

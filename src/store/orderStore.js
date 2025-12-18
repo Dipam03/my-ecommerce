@@ -21,6 +21,7 @@ export const useOrderStore = create(
           const deliveryStatus = [
             { step: 'Order placed', completed: true, date: new Date().toISOString() },
             { step: 'Confirmed', completed: true, date: new Date().toISOString() },
+            { step: 'Processing', completed: false, date: null },
             { step: 'Shipped', completed: false, date: null },
             { step: 'Out for delivery', completed: false, date: null },
             { step: 'Delivered', completed: false, date: null }
@@ -110,11 +111,18 @@ export const useOrderStore = create(
 
       cancelOrder: async (orderId) => {
         try {
+          const deliveryStatus = [
+            { step: 'Cancelled', completed: true, date: new Date().toISOString() }
+          ]
+
           const orderRef = doc(db, 'orders', orderId)
-          await updateDoc(orderRef, { status: 'cancelled' })
+          await updateDoc(orderRef, {
+            status: 'cancelled',
+            deliveryStatus
+          })
 
           set((s) => ({
-            orders: s.orders.map(o => o.id === orderId ? { ...o, status: 'cancelled' } : o)
+            orders: s.orders.map(o => o.id === orderId ? { ...o, status: 'cancelled', deliveryStatus } : o)
           }))
         } catch (err) {
           set({ error: err.message })
