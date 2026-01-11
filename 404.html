@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content="0; url=/my-ecommerce/" />
+    <script>
+      // Fallback: if refresh doesn't work, redirect by JS
+      (function(){
+        try {
+          window.location.replace('/my-ecommerce/');
+        } catch(e) {
+          window.location.href = '/my-ecommerce/';
+        }
+      })();
+    </script>
+    <title>Redirecting...</title>
+  </head>
+  <body>
+    Redirecting to app...
+  </body>
+</html>
