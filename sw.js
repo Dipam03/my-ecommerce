@@ -1,4 +1,4 @@
-const CACHE_NAME = 'crodyto-cache-v1';
+const CACHE_NAME = 'crodyto-cache-v2';
 const PRECACHE_URLS = [
   '/',
   '/index.html'
