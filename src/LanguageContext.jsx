@@ -8,6 +8,7 @@ export const LanguageContext = createContext({
 
 const translations = {
   en: {
+    // Account & User
     customerDetails: 'Customer Details',
     name: 'Name',
     email: 'Email',
@@ -36,9 +37,52 @@ const translations = {
     change: 'Change',
     savingAddress: 'Saving...',
     saveAddress: 'Save Address',
-    language: 'Language'
+    language: 'Language',
+    // Home & Navigation
+    home: 'Home',
+    search: 'Search',
+    cart: 'Cart',
+    account: 'Account',
+    wishlist: 'Wishlist',
+    orders: 'Orders',
+    // Products
+    products: 'Products',
+    price: 'Price',
+    rating: 'Rating',
+    inStock: 'In Stock',
+    outOfStock: 'Out of Stock',
+    addToCart: 'Add to Cart',
+    addToWishlist: 'Add to Wishlist',
+    removeFromWishlist: 'Remove from Wishlist',
+    quantity: 'Quantity',
+    description: 'Description',
+    reviews: 'Reviews',
+    // Checkout
+    checkout: 'Checkout',
+    subtotal: 'Subtotal',
+    shipping: 'Shipping',
+    total: 'Total',
+    placeOrder: 'Place Order',
+    orderConfirmed: 'Order Confirmed',
+    // Auth
+    login: 'Login',
+    register: 'Register',
+    password: 'Password',
+    confirmPassword: 'Confirm Password',
+    forgotPassword: 'Forgot Password?',
+    dontHaveAccount: "Don't have an account?",
+    alreadyHaveAccount: 'Already have an account?',
+    // Common
+    loading: 'Loading...',
+    error: 'Error',
+    success: 'Success',
+    noResults: 'No results found',
+    delete: 'Delete',
+    confirm: 'Confirm',
+    close: 'Close'
   },
   hi: {
+    // Account & User
     customerDetails: 'ग्राहक विवरण',
     name: 'नाम',
     email: 'ईमेल',
@@ -67,9 +111,52 @@ const translations = {
     change: 'बदलें',
     savingAddress: 'सहेज रहे हैं...',
     saveAddress: 'पता सहेजें',
-    language: 'भाषा'
+    language: 'भाषा',
+    // Home & Navigation
+    home: 'होम',
+    search: 'खोजें',
+    cart: 'कार्ट',
+    account: 'खाता',
+    wishlist: 'विशलिस्ट',
+    orders: 'ऑर्डर',
+    // Products
+    products: 'उत्पाद',
+    price: 'कीमत',
+    rating: 'रेटिंग',
+    inStock: 'स्टॉक में',
+    outOfStock: 'स्टॉक से बाहर',
+    addToCart: 'कार्ट में जोड़ें',
+    addToWishlist: 'विशलिस्ट में जोड़ें',
+    removeFromWishlist: 'विशलिस्ट से हटाएं',
+    quantity: 'मात्रा',
+    description: 'विवरण',
+    reviews: 'समीक्षा',
+    // Checkout
+    checkout: 'चेकआउट',
+    subtotal: 'उप कुल',
+    shipping: 'शिपिंग',
+    total: 'कुल',
+    placeOrder: 'ऑर्डर देते हैं',
+    orderConfirmed: 'ऑर्डर की पुष्टि',
+    // Auth
+    login: 'लॉगिन',
+    register: 'रजिस्टर करें',
+    password: 'पासवर्ड',
+    confirmPassword: 'पासवर्ड की पुष्टि करें',
+    forgotPassword: 'पासवर्ड भूल गए?',
+    dontHaveAccount: 'खाता नहीं है?',
+    alreadyHaveAccount: 'पहले से खाता है?',
+    // Common
+    loading: 'लोड हो रहा है...',
+    error: 'त्रुटि',
+    success: 'सफल',
+    noResults: 'कोई परिणाम नहीं',
+    delete: 'हटाएं',
+    confirm: 'पुष्टि करें',
+    close: 'बंद करें'
   },
   bn: {
+    // Account & User
     customerDetails: 'গ্রাহক বিবরণ',
     name: 'নাম',
     email: 'ইমেইল',
@@ -98,7 +185,49 @@ const translations = {
     change: 'পরিবর্তন করুন',
     savingAddress: 'সংরক্ষণ করা হচ্ছে...',
     saveAddress: 'ঠিকানা সংরক্ষণ করুন',
-    language: 'ভাষা'
+    language: 'ভাষা',
+    // Home & Navigation
+    home: 'হোম',
+    search: 'অনুসন্ধান',
+    cart: 'কার্ট',
+    account: 'অ্যাকাউন্ট',
+    wishlist: 'উইশলিস্ট',
+    orders: 'অর্ডার',
+    // Products
+    products: 'পণ্য',
+    price: 'মূল্য',
+    rating: 'রেটিং',
+    inStock: 'স্টকে আছে',
+    outOfStock: 'স্টক শেষ',
+    addToCart: 'কার্টে যোগ করুন',
+    addToWishlist: 'উইশলিস্টে যোগ করুন',
+    removeFromWishlist: 'উইশলিস্ট থেকে সরান',
+    quantity: 'পরিমাণ',
+    description: 'বর্ণনা',
+    reviews: 'পর্যালোচনা',
+    // Checkout
+    checkout: 'চেকআউট',
+    subtotal: 'উপ-মোট',
+    shipping: 'শিপিং',
+    total: 'মোট',
+    placeOrder: 'অর্ডার দিন',
+    orderConfirmed: 'অর্ডার নিশ্চিত',
+    // Auth
+    login: 'লগইন',
+    register: 'নিবন্ধন করুন',
+    password: 'পাসওয়ার্ড',
+    confirmPassword: 'পাসওয়ার্ড নিশ্চিত করুন',
+    forgotPassword: 'পাসওয়ার্ড ভুলে গেছেন?',
+    dontHaveAccount: 'অ্যাকাউন্ট নেই?',
+    alreadyHaveAccount: 'ইতিমধ্যে অ্যাকাউন্ট আছে?',
+    // Common
+    loading: 'লোড হচ্ছে...',
+    error: 'ত্রুটি',
+    success: 'সফল',
+    noResults: 'কোন ফলাফল নেই',
+    delete: 'মুছুন',
+    confirm: 'নিশ্চিত করুন',
+    close: 'বন্ধ করুন'
   }
 }
 

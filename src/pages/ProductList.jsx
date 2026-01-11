@@ -2,8 +2,9 @@ import { Link, useSearchParams, useNavigate } from 'react-router-dom'
 import { useProductStore } from '../store/productStore'
 import { useCartStore } from '../store/cartStore'
 import { useWishlistStore } from '../store/wishlistStore'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useContext } from 'react'
 import { FiFilter, FiX, FiHeart, FiShoppingCart } from 'react-icons/fi'
+import { LanguageContext } from '../LanguageContext'
 
 export default function ProductList(){
   const [searchParams] = useSearchParams()
@@ -11,6 +12,7 @@ export default function ProductList(){
   const { products } = useProductStore()
   const { addItem: addToCart } = useCartStore()
   const { addItem: addToWishlist, isWishlisted, removeItem: removeFromWishlist } = useWishlistStore()
+  const { t } = useContext(LanguageContext)
   const query = searchParams.get('q') || ''
   const [selectedCategory, setSelectedCategory] = useState(null)
   const [priceRange, setPriceRange] = useState({ min: 0, max: 100000 })
@@ -53,18 +55,18 @@ export default function ProductList(){
       <div className="mb-4 sticky top-0 bg-white z-10 py-2">
         <div className="flex items-center justify-between mb-3 gap-2">
           <h1 className="text-lg sm:text-2xl font-bold text-gray-900 truncate flex-1">
-            {query ? `Search: "${query}"` : selectedCategory || 'Products'}
+            {query ? `${t('search')}: "${query}"` : selectedCategory || t('products')}
           </h1>
           <button
             onClick={() => setShowFilters(!showFilters)}
             className="flex items-center gap-2 px-3 py-2 border rounded-lg text-gray-700 active:opacity-70 min-h-[44px] font-medium text-sm"
           >
             <FiFilter size={16} />
-            <span className="hidden sm:inline">Filter</span>
+            <span className="hidden sm:inline">{t('Filter')}</span>
           </button>
         </div>
         <p className="text-xs sm:text-sm text-gray-500">
-          {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''}
+          {filteredProducts.length} {filteredProducts.length !== 1 ? t('products') : t('products')}
         </p>
       </div>
 

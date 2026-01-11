@@ -1,13 +1,15 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { FiShoppingCart, FiSearch } from 'react-icons/fi'
 import { useCartStore } from '../store/cartStore'
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import Logo from './Logo'
+import { LanguageContext } from '../LanguageContext'
 
 export default function Header({ onCartClick }) {
   const total = useCartStore((s) => s.totalCount)
   const navigate = useNavigate()
   const [q, setQ] = useState('')
+  const { t } = useContext(LanguageContext)
 
   const onSearch = (e) => {
     e.preventDefault()
@@ -30,7 +32,7 @@ export default function Header({ onCartClick }) {
             <div className="flex items-center bg-white bg-opacity-20 rounded-lg overflow-hidden backdrop-blur-sm">
               <input
                 className="flex-1 px-3 py-2 bg-transparent outline-none text-sm text-white placeholder-orange-100 font-normal"
-                placeholder="Search products..."
+                placeholder={t('search') + ' ' + t('products') + '...'}
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
               />
@@ -61,7 +63,7 @@ export default function Header({ onCartClick }) {
               <input
                 type="search"
                 className="flex-1 px-3 py-2 bg-transparent outline-none text-sm text-gray-900 placeholder-gray-500"
-                placeholder="Search..."
+                placeholder={t('search') + '...'}
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
               />

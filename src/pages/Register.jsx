@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { createUserWithEmailAndPassword, updateProfile, GoogleAuthProvider, FacebookAuthProvider, signInWithPopup } from 'firebase/auth'
 import { auth, db } from '../firebase'
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
 import { useNavigate, Link } from 'react-router-dom'
+import { LanguageContext } from '../LanguageContext'
 
 export default function Register(){
   const [email, setEmail] = useState('')
@@ -11,6 +12,7 @@ export default function Register(){
   const [phone, setPhone] = useState('')
   const [error, setError] = useState('')
   const navigate = useNavigate()
+  const { t } = useContext(LanguageContext)
 
   const onSubmit = async (e) => {
     e.preventDefault()
@@ -67,7 +69,7 @@ export default function Register(){
 
   return (
     <div className="max-w-md mx-auto p-4">
-      <h1 className="text-xl font-semibold mb-4">Register</h1>
+      <h1 className="text-xl font-semibold mb-4">{t('register')}</h1>
       <div className="space-y-3">
         <button type="button" onClick={()=>handleProviderSignIn('google')} className="w-full flex items-center justify-center gap-2 border p-2 rounded bg-white hover:bg-gray-50">
           <span>Continue with Google</span>
@@ -76,19 +78,19 @@ export default function Register(){
           <span>Continue with Facebook</span>
         </button>
 
-        <div className="text-center text-sm text-gray-500">or register with email</div>
+        <div className="text-center text-sm text-gray-500">{t('loading')} with email</div>
 
         <form onSubmit={onSubmit} className="space-y-3">
-          <input value={name} onChange={e=>setName(e.target.value)} placeholder="Full name" className="w-full p-2 border rounded" />
-          <input value={email} onChange={e=>setEmail(e.target.value)} placeholder="Email" className="w-full p-2 border rounded" />
-          <input value={phone} onChange={e=>setPhone(e.target.value)} placeholder="Mobile number (required)" className="w-full p-2 border rounded" required inputMode="tel" />
-          <input value={password} onChange={e=>setPassword(e.target.value)} placeholder="Password" type="password" className="w-full p-2 border rounded" />
+          <input value={name} onChange={e=>setName(e.target.value)} placeholder={t('name')} className="w-full p-2 border rounded" />
+          <input value={email} onChange={e=>setEmail(e.target.value)} placeholder={t('email')} className="w-full p-2 border rounded" />
+          <input value={phone} onChange={e=>setPhone(e.target.value)} placeholder={t('mobile') + ' (' + t('loading') + ')'} className="w-full p-2 border rounded" required inputMode="tel" />
+          <input value={password} onChange={e=>setPassword(e.target.value)} placeholder={t('password')} type="password" className="w-full p-2 border rounded" />
           {error && <div className="text-sm text-red-500">{error}</div>}
           <button className="w-full bg-green-600 text-white py-2 rounded">Create account</button>
         </form>
       </div>
 
-      <p className="mt-3 text-sm">Already have an account? <Link to="/login" className="text-gray-900">Login</Link></p>
+      <p className="mt-3 text-sm">{t('alreadyHaveAccount')} <Link to="/login" className="text-gray-900">{t('login')}</Link></p>
     </div>
   )
 }

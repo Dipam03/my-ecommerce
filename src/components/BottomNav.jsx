@@ -2,26 +2,29 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { FiHome, FiHeart, FiUser, FiShoppingBag, FiSearch } from 'react-icons/fi'
 import CartBar from './CartBar'
 import { useWishlistStore } from '../store/wishlistStore'
+import { useContext } from 'react'
+import { LanguageContext } from '../LanguageContext'
 
 export default function BottomNav() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const wishlistItems = useWishlistStore(state => state.items)
+  const { t } = useContext(LanguageContext)
 
   const isActive = (path) => pathname === path || (path === '/products' && pathname.startsWith('/products'))
 
   const navItems = [
-    { icon: FiHome, label: 'Home', path: '/' },
-    { icon: FiSearch, label: 'Search', path: '/products' },
-    { icon: FiUser, label: 'Account', path: '/account' },
-    { icon: FiShoppingBag, label: 'Orders', path: '/orders' },
-    { icon: FiHeart, label: 'Wishlist', path: '/wishlist', badge: wishlistItems.length }
+    { icon: FiHome, label: t('home'), path: '/' },
+    { icon: FiSearch, label: t('search'), path: '/products' },
+    { icon: FiUser, label: t('account'), path: '/account' },
+    { icon: FiShoppingBag, label: t('orders'), path: '/orders' },
+    { icon: FiHeart, label: t('wishlist'), path: '/wishlist', badge: wishlistItems.length }
   ]
 
   return (
     <>
       <CartBar />
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:hidden z-10 safe-area-bottom">
+      <nav className="bottom-nav fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 md:hidden z-10 safe-area-bottom">
         <div className="max-w-6xl mx-auto flex justify-between items-stretch h-16">
           {navItems.map((item) => {
             const Icon = item.icon
