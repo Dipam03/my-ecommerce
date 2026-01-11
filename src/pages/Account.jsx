@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth, db, storage } from '../firebase'
 import { useNavigate, Link } from 'react-router-dom'
@@ -6,6 +6,7 @@ import { FiEdit2, FiPhone, FiMessageCircle, FiLogOut } from 'react-icons/fi'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { ref as sRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
 import { updateProfile, signOut } from 'firebase/auth'
+import { LanguageContext } from '../LanguageContext'
 
 export default function Account(){
   const [user] = useAuthState(auth)
@@ -176,7 +177,7 @@ export default function Account(){
   }
 
   const handleLogout = async () => {
-    if (window.confirm('Are you sure you want to logout?')) {
+    if (window.confirm(t('logout') + ' — Are you sure?')) {
       try {
         await signOut(auth)
         navigate('/')
@@ -185,6 +186,12 @@ export default function Account(){
         alert('Failed to logout. Please try again.')
       }
     }
+  }
+
+  const { language, setLanguage, t } = useContext(LanguageContext)
+
+  const handleChangeLanguage = (e) => {
+    setLanguage(e.target.value)
   }
 
   if (loading) {
@@ -376,7 +383,7 @@ export default function Account(){
       </section>
 
       <section className="mb-4 bg-white p-3 rounded border">
-        <h3 className="font-semibold mb-3">Customer Support</h3>
+        <h3 className="font-semibold mb-3">{t('customerSupport')}</h3>
         <div className="space-y-2 mb-3">
           <p className="text-sm text-gray-700">Email: support@crodyto.example</p>
           <p className="text-sm text-gray-700">Phone: +91 90000 00000</p>
@@ -394,6 +401,18 @@ export default function Account(){
           >
             <FiMessageCircle size={18} /> Chat
           </button>
+        </div>
+      </section>
+
+      <section className="mb-4 bg-white p-3 rounded border">
+        <h3 className="font-semibold mb-3">Language</h3>
+        <div className="flex items-center gap-2">
+          <select value={language} onChange={handleChangeLanguage} className="p-2 border rounded flex-1">
+            <option value="en">English</option>
+            <option value="hi">हिन्दी</option>
+            <option value="bn">বাংলা</option>
+          </select>
+          <button onClick={() => setLanguage(language)} className="px-3 py-2 bg-gray-100 rounded">Apply</button>
         </div>
       </section>
 

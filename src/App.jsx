@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import Header from './components/Header'
 import BottomNav from './components/BottomNav'
 import CartDrawer from './components/CartDrawer'
+import LanguageProvider from './LanguageContext'
 import Home from './pages/Home'
 import ProductList from './pages/ProductList'
 import ProductDetails from './pages/ProductDetails'
@@ -82,12 +83,13 @@ function App() {
   }
 
   return (
-    <Router basename={import.meta.env.VITE_BASE || (import.meta.env.PROD ? '/my-ecommerce/' : '/')}>
-      <div className="flex flex-col h-screen bg-white text-gray-900 overflow-hidden">
-        <Header onCartClick={() => setCartOpen(true)} />
-        <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
+    <LanguageProvider>
+      <Router basename={import.meta.env.VITE_BASE || (import.meta.env.PROD ? '/my-ecommerce/' : '/')}>
+        <div className="flex flex-col h-screen bg-white text-gray-900 overflow-hidden">
+          <Header onCartClick={() => setCartOpen(true)} />
+          <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} />
 
-        <main className="flex-1 overflow-y-auto scrollable">
+          <main className="flex-1 overflow-y-auto scrollable">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/products" element={<ProductList />} />
@@ -104,10 +106,10 @@ function App() {
             <Route path="/admin/edit-product/:id" element={<AdminEditProduct />} />
           </Routes>
         </main>
-
-        <BottomNav />
-      </div>
-    </Router>
+          <BottomNav />
+        </div>
+      </Router>
+    </LanguageProvider>
   )
 }
 
