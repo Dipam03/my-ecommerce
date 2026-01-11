@@ -404,15 +404,14 @@ export default function Account(){
         </div>
       </section>
 
-      <section className="mb-4 bg-white p-3 rounded border">
-        <h3 className="font-semibold mb-3">Language</h3>
-        <div className="flex items-center gap-2">
-          <select value={language} onChange={handleChangeLanguage} className="p-2 border rounded flex-1">
-            <option value="en">English</option>
-            <option value="hi">हिन्दी</option>
-            <option value="bn">বাংলা</option>
+      <section className="mb-2 bg-white p-2 rounded border">
+        <div className="flex items-center justify-between">
+          <h3 className="font-semibold text-sm">Language</h3>
+          <select value={language} onChange={handleChangeLanguage} className="p-2 text-sm border rounded w-32">
+            <option value="en">EN</option>
+            <option value="hi">HI</option>
+            <option value="bn">BN</option>
           </select>
-          <button onClick={() => setLanguage(language)} className="px-3 py-2 bg-gray-100 rounded">Apply</button>
         </div>
       </section>
 
