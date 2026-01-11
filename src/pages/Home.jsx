@@ -4,8 +4,9 @@ import 'swiper/css'
 import { useProductStore } from '../store/productStore'
 import { useCartStore } from '../store/cartStore'
 import { useWishlistStore } from '../store/wishlistStore'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useContext } from 'react'
 import { FiShoppingCart, FiHeart } from 'react-icons/fi'
+import { LanguageContext } from '../LanguageContext'
 
 export default function Home() {
   const navigate = useNavigate()
@@ -13,6 +14,7 @@ export default function Home() {
   const { addItem: addToCart } = useCartStore()
   const { addItem, removeItem, isWishlisted } = useWishlistStore()
   const [actionLoading, setActionLoading] = useState(null)
+  const { t } = useContext(LanguageContext)
   
   // Show featured products (first 4)
   const featuredProducts = useMemo(() => {
@@ -67,13 +69,13 @@ export default function Home() {
 
       <section className="mb-8">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 animate-slideInLeft">Featured Products</h2>
-          <Link to="/products" className="text-sm font-medium text-orange-600 hover:text-orange-700 hover:translate-x-1 transition-all">View all →</Link>
+          <h2 className="text-lg sm:text-xl font-semibold text-gray-900 animate-slideInLeft">{t('featuredProducts')}</h2>
+          <Link to="/products" className="text-sm font-medium text-orange-600 hover:text-orange-700 hover:translate-x-1 transition-all">{t('viewAll')} →</Link>
         </div>
 
         {featuredProducts.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            <p>No products available</p>
+            <p>{t('noResults')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
@@ -99,7 +101,7 @@ export default function Home() {
                         className="flex-1 bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 text-white text-xs sm:text-sm font-medium py-1.5 rounded transition-all flex items-center justify-center gap-1 hover:shadow-lg hover:shadow-orange-200"
                       >
                         <FiShoppingCart size={14} className="hidden sm:block" />
-                        <span className="text-xs sm:text-sm">Add</span>
+                        <span className="text-xs sm:text-sm">{t('add')}</span>
                       </button>
                       <button
                         onClick={(e) => handleWishlistToggle(e, p)}
@@ -112,7 +114,7 @@ export default function Home() {
                         onClick={(e) => handleBuyNow(e, p)}
                         className="flex-1 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white text-xs sm:text-sm font-medium py-1.5 rounded transition-all hover:shadow-lg hover:shadow-green-200"
                       >
-                        Buy
+                        {t('buy')}
                       </button>
                     </div>
                   </div>
