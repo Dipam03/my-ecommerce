@@ -24,7 +24,7 @@ export default function AdminAddProduct() {
         price: Number(formData.price),
         description: formData.description,
         category: formData.category,
-        image: formData.image || 'https://via.placeholder.com/300',
+        image: formData.image || 'https://picsum.photos/300',
       })
       navigate('/admin/products')
     } catch (err) {

@@ -18,7 +18,7 @@ export default function AdminEditProduct() {
   useEffect(() => {
     const product = getProduct(id)
     if (product) {
-      setFormData(product)
+      setTimeout(() => setFormData(product), 0)
     }
   }, [id, getProduct])
 

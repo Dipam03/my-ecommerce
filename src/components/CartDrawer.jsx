@@ -16,83 +16,91 @@ export default function CartDrawer({ isOpen, onClose }) {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex animate-fadeIn">
-      <div onClick={onClose} className="flex-1 bg-black bg-opacity-40 backdrop-blur-sm" />
-      <div className="w-full sm:w-96 bg-white shadow-2xl flex flex-col animate-slideInRight">
+    <div className="fixed inset-0 z-50 flex">
+      {/* Backdrop */}
+      <div onClick={onClose} className="flex-1 bg-black bg-opacity-50 backdrop-blur-sm" />
+      
+      {/* Drawer */}
+      <div className="w-full sm:max-w-md bg-white shadow-2xl flex flex-col">
         {/* Header */}
-        <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-orange-50 to-orange-100 flex items-center justify-between sticky top-0">
+        <div className="p-3 sm:p-4 border-b border-gray-200 bg-gradient-to-r from-orange-600 to-orange-700 flex items-center justify-between sticky top-0 z-10 safe-area-top">
           <div className="flex items-center gap-2">
-            <FiShoppingCart className="text-orange-600" size={20} />
-            <h2 className="font-bold text-lg text-gray-900">My Cart</h2>
+            <FiShoppingCart className="text-white" size={20} />
+            <h2 className="font-bold text-base sm:text-lg text-white">Cart</h2>
             {itemCount > 0 && (
-              <span className="bg-orange-600 text-white text-xs font-bold px-2 py-1 rounded-full">{itemCount}</span>
+              <span className="bg-yellow-400 text-orange-700 text-xs font-bold px-2 py-0.5 rounded-full">{itemCount}</span>
             )}
           </div>
-          <button onClick={onClose} className="p-1 hover:bg-orange-200 rounded-lg transition-colors">
-            <FiX size={20} />
+          <button onClick={onClose} className="p-2 hover:bg-orange-500 rounded-lg transition-colors touch-area active:opacity-70" aria-label="close cart">
+            <FiX size={20} className="text-white" />
           </button>
         </div>
 
         {/* Cart Items */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto scrollable">
           {items.length === 0 ? (
-            <div className="p-8 text-center flex flex-col items-center justify-center h-full">
-              <FiShoppingCart size={48} className="text-gray-300 mb-4" />
-              <p className="text-gray-500 font-medium">Your cart is empty</p>
-              <p className="text-xs text-gray-400 mt-2">Add products to get started</p>
+            <div className="p-4 sm:p-6 text-center flex flex-col items-center justify-center h-full">
+              <FiShoppingCart size={48} className="text-gray-300 mb-3" />
+              <p className="text-gray-600 font-semibold text-sm">Your cart is empty</p>
+              <p className="text-xs text-gray-500 mt-1">Add products to get started</p>
               <button
                 onClick={() => {
                   onClose()
                   navigate('/products')
                 }}
-                className="mt-4 px-4 py-2 bg-gradient-to-r from-orange-600 to-orange-700 text-white rounded-lg font-semibold hover:shadow-lg transition-all"
+                className="mt-4 px-4 py-2 bg-gradient-to-r from-orange-600 to-orange-700 text-white rounded-lg font-semibold active:opacity-70 touch-area min-h-[44px]"
               >
-                Continue Shopping
+                Start Shopping
               </button>
             </div>
           ) : (
             <div className="divide-y divide-gray-200">
               {items.map((item) => (
-                <div key={item.id} className="p-4 hover:bg-gray-50 transition-colors">
+                <div key={item.id} className="p-3 sm:p-4 active:bg-gray-50">
                   {/* Product Image & Name */}
                   <div className="flex gap-3 mb-3">
-                    <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                    <div className="w-16 sm:w-20 h-16 sm:h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                       {item.image ? (
                         <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400">Image</div>
+                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">Img</div>
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-sm text-gray-900 truncate">{item.name}</h3>
+                      <h3 className="font-semibold text-xs sm:text-sm text-gray-900 line-clamp-2">{item.name}</h3>
                       <p className="text-xs text-gray-500 mt-1">{item.category || 'Product'}</p>
-                      <p className="text-orange-600 font-bold mt-1">₹{item.price}</p>
+                      <p className="text-orange-600 font-bold mt-1.5 text-sm">₹{item.price}</p>
                     </div>
                     <button
                       onClick={() => removeItem(item.id)}
-                      className="p-1 hover:bg-red-100 rounded-lg transition-colors flex-shrink-0"
+                      className="p-1.5 hover:bg-red-100 rounded-lg transition-colors flex-shrink-0 active:opacity-70 touch-area"
+                      aria-label="remove item"
                     >
                       <FiX size={16} className="text-red-500" />
                     </button>
                   </div>
 
                   {/* Quantity Controls */}
-                  <div className="flex items-center gap-2">
-                    <button
-                      onClick={() => updateQty(item.id, Math.max(1, (item.qty || 1) - 1))}
-                      className="p-1 border border-gray-300 rounded-lg hover:bg-orange-50 hover:border-orange-300 transition-all"
-                    >
-                      <FiMinus size={14} />
-                    </button>
-                    <span className="w-8 text-center font-semibold text-gray-900">{item.qty || 1}</span>
-                    <button
-                      onClick={() => updateQty(item.id, (item.qty || 1) + 1)}
-                      className="p-1 border border-gray-300 rounded-lg hover:bg-orange-50 hover:border-orange-300 transition-all"
-                    >
-                      <FiPlus size={14} />
-                    </button>
-                    <span className="ml-auto text-sm font-semibold text-gray-900">
-                      ₹{(item.price * (item.qty || 1)).toFixed(2)}
+                  <div className="flex items-center gap-2 justify-between">
+                    <div className="flex items-center gap-1.5 border border-gray-300 rounded-lg">
+                      <button
+                        onClick={() => updateQty(item.id, Math.max(1, (item.qty || 1) - 1))}
+                        className="p-1.5 text-gray-600 active:bg-orange-50 touch-area min-h-[40px] min-w-[40px]"
+                        aria-label="decrease quantity"
+                      >
+                        <FiMinus size={14} />
+                      </button>
+                      <span className="w-8 text-center text-sm font-semibold text-gray-900">{item.qty || 1}</span>
+                      <button
+                        onClick={() => updateQty(item.id, (item.qty || 1) + 1)}
+                        className="p-1.5 text-gray-600 active:bg-orange-50 touch-area min-h-[40px] min-w-[40px]"
+                        aria-label="increase quantity"
+                      >
+                        <FiPlus size={14} />
+                      </button>
+                    </div>
+                    <span className="text-sm font-bold text-gray-900">
+                      ₹{(item.price * (item.qty || 1)).toFixed(0)}
                     </span>
                   </div>
                 </div>
@@ -103,23 +111,23 @@ export default function CartDrawer({ isOpen, onClose }) {
 
         {/* Footer */}
         {items.length > 0 && (
-          <div className="p-4 border-t border-gray-200 bg-gradient-to-t from-orange-50 to-transparent space-y-3 sticky bottom-0">
+          <div className="p-3 sm:p-4 border-t border-gray-200 bg-gradient-to-t from-gray-50 space-y-2.5 sticky bottom-0 safe-area-bottom">
             <div className="flex items-center justify-between">
-              <span className="text-gray-600 font-medium">Subtotal:</span>
-              <span className="text-lg font-bold text-gray-900">₹{total.toFixed(2)}</span>
+              <span className="text-gray-700 font-medium text-sm">Subtotal:</span>
+              <span className="text-lg sm:text-xl font-bold text-orange-600">₹{total.toFixed(0)}</span>
             </div>
-            <div className="text-xs text-gray-500">Shipping & taxes calculated at checkout</div>
+            <p className="text-xs text-gray-500 text-center">Shipping & taxes at checkout</p>
             <button
               onClick={onCheckout}
-              className="w-full bg-gradient-to-r from-orange-600 to-orange-700 text-white py-3 rounded-lg font-bold hover:shadow-lg hover:shadow-orange-200 transition-all active:scale-95"
+              className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white py-3 rounded-lg font-bold active:opacity-90 touch-area min-h-[48px] text-sm transition"
             >
-              Proceed to Checkout
+              Checkout
             </button>
             <button
               onClick={onClose}
-              className="w-full bg-gray-100 text-gray-900 py-2 rounded-lg font-medium hover:bg-gray-200 transition-colors"
+              className="w-full bg-gray-100 text-gray-900 py-2.5 rounded-lg font-semibold active:opacity-70 touch-area min-h-[44px] text-sm transition"
             >
-              Continue Shopping
+              Continue
             </button>
           </div>
         )}

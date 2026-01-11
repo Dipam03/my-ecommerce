@@ -3,7 +3,7 @@ import { useProductStore } from '../store/productStore'
 import { Link } from 'react-router-dom'
 import { FiTrendingUp, FiStar } from 'react-icons/fi'
 
-export default function SmartRecommendations({ currentProductId, userViewHistory = [] }) {
+export default function SmartRecommendations({ currentProductId }) {
   const { products } = useProductStore()
 
   const recommendations = useMemo(() => {

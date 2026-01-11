@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { FiShoppingCart, FiSearch, FiMenu } from 'react-icons/fi'
+import { FiShoppingCart, FiSearch } from 'react-icons/fi'
 import { useCartStore } from '../store/cartStore'
 import { useState } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
@@ -15,7 +15,10 @@ export default function Header({ onCartClick }) {
 
   const onSearch = (e) => {
     e.preventDefault()
-    navigate('/products?q=' + encodeURIComponent(q))
+    if (q.trim()) {
+      navigate('/products?q=' + encodeURIComponent(q))
+      setQ('')
+    }
   }
 
   const onLogout = async () => {
@@ -23,83 +26,83 @@ export default function Header({ onCartClick }) {
   }
 
   return (
-    <header className="w-full bg-gradient-to-r from-orange-600 to-orange-700 border-b border-orange-800 px-3 sm:px-4 py-3 sticky top-0 z-20 shadow-lg">
-      <div className="max-w-4xl mx-auto">
+    <header className="w-full bg-gradient-to-r from-orange-600 to-orange-700 border-b border-orange-800 px-3 sm:px-4 py-2 sm:py-3 sticky top-0 z-20 shadow-lg safe-area-top">
+      <div className="max-w-6xl mx-auto">
         {/* Desktop view */}
-        <div className="hidden sm:flex items-center gap-3">
-          <Link to="/" aria-label="Home" className="transform hover:scale-105 transition-transform">
+        <div className="hidden sm:flex items-center gap-4">
+          <Link to="/" aria-label="Home" className="flex-shrink-0 touch-area">
             <Logo />
           </Link>
 
           <form onSubmit={onSearch} className="flex-1 max-w-md">
-            <div className="flex items-center bg-white bg-opacity-20 rounded-lg overflow-hidden backdrop-blur-sm hover:bg-opacity-30 transition-all">
+            <div className="flex items-center bg-white bg-opacity-20 rounded-lg overflow-hidden backdrop-blur-sm">
               <input
-                className="flex-1 px-3 py-2 bg-transparent outline-none text-sm text-white placeholder-red-100"
+                className="flex-1 px-3 py-2 bg-transparent outline-none text-sm text-white placeholder-orange-100 font-normal"
                 placeholder="Search products..."
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
               />
-              <button type="submit" className="px-3 py-2 text-white hover:bg-red-500 transition-all" aria-label="search">
+              <button type="submit" className="px-3 py-2 text-white active:opacity-70" aria-label="search">
                 <FiSearch size={18} />
               </button>
             </div>
           </form>
 
           <div className="flex items-center gap-3">
-            <button onClick={onCartClick} className="relative text-white hover:bg-orange-500 p-2 rounded-lg transition-all" aria-label="cart">
+            <button onClick={onCartClick} className="relative touch-area text-white active:opacity-70" aria-label="cart">
               <FiShoppingCart size={20} />
               {total > 0 && (
-                <span className="absolute -top-2 -right-2 bg-yellow-400 text-red-700 text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold animate-glow">{total}</span>
+                <span className="absolute top-0 right-0 bg-yellow-400 text-orange-700 text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">{total > 99 ? '99+' : total}</span>
               )}
             </button>
 
             {user ? (
               <div className="flex items-center gap-2">
-                <span className="text-sm text-white">{user.displayName || user.email.substring(0, 10)}</span>
-                <button onClick={onLogout} className="px-3 py-1 text-sm border border-orange-200 text-white rounded-lg hover:bg-orange-500 transition-all font-medium">Logout</button>
+                <span className="text-sm text-white truncate max-w-[120px]">{user.displayName || user.email?.substring(0, 10)}</span>
+                <button onClick={onLogout} className="px-3 py-1.5 text-sm bg-orange-500 text-white rounded-lg active:opacity-70 font-medium min-h-[40px]">Logout</button>
               </div>
             ) : (
-              <Link to="/login" className="px-3 py-1 text-sm border border-orange-200 text-white rounded-lg hover:bg-orange-500 transition-all font-medium">Login</Link>
+              <Link to="/login" className="px-3 py-1.5 text-sm bg-orange-500 text-white rounded-lg active:opacity-70 font-medium touch-area">Login</Link>
             )}
           </div>
         </div>
 
         {/* Mobile view */}
-        <div className="sm:hidden flex items-center justify-between">
-          <Link to="/" aria-label="Home" className="transform hover:scale-105 transition-transform">
+        <div className="sm:hidden flex items-center justify-between gap-2">
+          <Link to="/" aria-label="Home" className="flex-shrink-0 touch-area">
             <Logo small />
           </Link>
 
-          <div className="flex items-center gap-2">
-            <button onClick={onCartClick} className="relative p-2 text-white hover:bg-orange-500 rounded-lg transition-all" aria-label="cart">
+          <form onSubmit={onSearch} className="flex-1 min-w-0">
+            <div className="flex items-center bg-white bg-opacity-90 rounded-lg overflow-hidden h-10">
+              <input
+                type="search"
+                className="flex-1 px-3 py-2 bg-transparent outline-none text-sm text-gray-900 placeholder-gray-500"
+                placeholder="Search..."
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+              />
+              <button type="submit" className="px-3 py-2 text-gray-600 active:opacity-70 flex-shrink-0" aria-label="search">
+                <FiSearch size={16} />
+              </button>
+            </div>
+          </form>
+
+          <div className="flex items-center gap-1 flex-shrink-0">
+            <button onClick={onCartClick} className="relative touch-area text-white active:opacity-70" aria-label="cart">
               <FiShoppingCart size={20} />
               {total > 0 && (
-                <span className="absolute top-0 right-0 bg-yellow-400 text-red-700 text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold animate-glow">{total}</span>
+                <span className="absolute top-0 right-0 bg-yellow-400 text-orange-700 text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">{total > 99 ? '99+' : total}</span>
               )}
             </button>
 
             {user ? (
-              <button onClick={onLogout} className="p-2 text-xs bg-gray-100 text-gray-900 rounded-lg font-medium">Out</button>
+              <button onClick={onLogout} className="touch-area text-xs bg-white bg-opacity-90 text-gray-900 rounded-lg font-medium px-2 h-10">Logout</button>
             ) : (
-              <Link to="/login" className="p-2 text-xs bg-gray-100 text-gray-900 rounded-lg font-medium">Login</Link>
+              <Link to="/login" className="touch-area text-xs bg-white bg-opacity-90 text-gray-900 rounded-lg font-medium px-2 h-10">Login</Link>
             )}
           </div>
         </div>
-
-        {/* Mobile search bar */}
-        <form onSubmit={onSearch} className="sm:hidden mt-3">
-          <div className="flex items-center bg-gray-100 rounded-lg overflow-hidden">
-            <input
-              className="flex-1 px-3 py-2 bg-transparent outline-none text-sm"
-              placeholder="Search..."
-              value={q}
-              onChange={(e) => setQ(e.target.value)}
-            />
-            <button type="submit" className="px-3 py-2 text-gray-600 hover:text-red-600 transition-colors" aria-label="search">
-              <FiSearch size={16} />
-            </button>
-          </div>
-        </form>
       </div>
     </header>
   )

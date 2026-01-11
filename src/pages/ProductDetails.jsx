@@ -6,8 +6,6 @@ import ImageLightbox from '../components/ImageLightbox'
 import SmartRecommendations from '../components/SmartRecommendations'
 import { FiHeart, FiShare2 } from 'react-icons/fi'
 import { useState, useEffect, useMemo } from 'react'
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth } from '../firebase'
 import { useProductStore } from '../store/productStore'
 
 export default function ProductDetails(){
@@ -21,21 +19,19 @@ export default function ProductDetails(){
   const [selectedImageIndex, setSelectedImageIndex] = useState(0)
 
   const getProduct = useProductStore(s => s.getProduct)
-  const updateProduct = useProductStore(s => s.updateProduct)
-  const [user] = useAuthState(auth)
 
   // Try to read product from product store (Firestore). Fallback to sample product.
   const storeProduct = getProduct(id)
-  const product = storeProduct || { id, name: `Product ${id}`, price: Number(id)*10, rating: 4.5, reviews: 120, image: `https://via.placeholder.com/500x500?text=Product+${id}+Image` }
+  const product = storeProduct || { id, name: `Product ${id}`, price: Number(id)*10, rating: 4.5, reviews: 120, image: `https://picsum.photos/500/500?random=${id}` }
 
   // Build images array
-  const productImages = (product.images && product.images.length)
+  const productImages = useMemo(() => (product.images && product.images.length)
     ? product.images
     : (product.image ? [product.image] : [
-      `https://via.placeholder.com/500x500?text=Product+${id}+Image+1`,
-      `https://via.placeholder.com/500x500?text=Product+${id}+Image+2`,
-      `https://via.placeholder.com/500x500?text=Product+${id}+Image+3`,
-    ])
+      `https://picsum.photos/500/500?random=${id}1`,
+      `https://picsum.photos/500/500?random=${id}2`,
+      `https://picsum.photos/500/500?random=${id}3`,
+    ]), [product.images, product.image, id])
 
   const isWishlisted = wishlistItems.some(p => p.id === id)
 
@@ -94,18 +90,7 @@ export default function ProductDetails(){
     }
   }, [id, product.name, productImages])
 
-  // Inline edit image (prompts for URL) — updates Firestore via product store
-  const onEditImage = async () => {
-    const url = window.prompt('Enter new image URL for this product', productImages[0] || '')
-    if (!url) return
-    try {
-      await updateProduct(id, { image: url })
-      alert('Image updated')
-    } catch (e) {
-      console.error('Failed to update image', e)
-      alert('Failed to update image')
-    }
-  }
+
 
   return (
     <div className="max-w-3xl mx-auto p-4 pb-24">

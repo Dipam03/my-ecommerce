@@ -40,15 +40,15 @@ export default function Account(){
         try {
           const userDocRef = doc(db, 'users', user.uid)
           const userDoc = await getDoc(userDocRef)
-          
+
           if (userDoc.exists()) {
             const userData = userDoc.data()
-            setForm(prev => ({
-              ...prev,
+            setForm(form => ({
+              ...form,
               name: user.displayName || userData.name || '',
               email: user.email || userData.email || '',
               phone: user.phoneNumber || userData.phone || '',
-              address: userData.address || prev.address
+              address: userData.address || form.address
             }))
             setTempAddress(userData.address || form.address)
           } else {
@@ -68,7 +68,7 @@ export default function Account(){
     }
 
     loadUserData()
-  }, [user])
+  }, [user, form.address])
 
   // Load recently viewed from localStorage
   useEffect(() => {
@@ -76,7 +76,7 @@ export default function Account(){
       const raw = localStorage.getItem('recentlyViewed')
       const list = raw ? JSON.parse(raw) : []
       setRecently(list)
-    } catch (e) {
+    } catch {
       setRecently([])
     }
   }, [])

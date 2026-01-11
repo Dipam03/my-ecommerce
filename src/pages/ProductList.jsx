@@ -48,32 +48,38 @@ export default function ProductList(){
   }, [products, query, selectedCategory, priceRange])
 
   return (
-    <div className="w-full max-w-6xl mx-auto px-3 sm:px-4 pb-24 pt-2">
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-            {query ? `Search: "${query}"` : selectedCategory ? selectedCategory : 'Shop All Products'}
+    <div className="w-full max-w-6xl mx-auto px-3 sm:px-4 pb-20 pt-2">
+      {/* Header */}
+      <div className="mb-4 sticky top-0 bg-white z-10 py-2">
+        <div className="flex items-center justify-between mb-3 gap-2">
+          <h1 className="text-lg sm:text-2xl font-bold text-gray-900 truncate flex-1">
+            {query ? `Search: "${query}"` : selectedCategory || 'Products'}
           </h1>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2 px-3 py-2 border rounded-lg hover:bg-gray-50"
+            className="flex items-center gap-2 px-3 py-2 border rounded-lg text-gray-700 active:opacity-70 min-h-[44px] font-medium text-sm"
           >
-            <FiFilter size={18} />
-            <span className="text-sm font-medium">Filters</span>
+            <FiFilter size={16} />
+            <span className="hidden sm:inline">Filter</span>
           </button>
         </div>
-        <p className="text-sm text-gray-500">
-          Showing {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''}
+        <p className="text-xs sm:text-sm text-gray-500">
+          {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''}
         </p>
       </div>
 
-      <div className="flex gap-4">
+      {/* Mobile Filter Modal */}
+      {showFilters && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden" onClick={() => setShowFilters(false)} />
+      )}
+
+      <div className="flex gap-3 lg:gap-4">
         {/* Filters Sidebar */}
         {showFilters && (
-          <div className="w-full sm:w-48 bg-white p-4 rounded-lg border mb-4 sm:mb-0 sm:sticky sm:top-4">
-            <div className="flex items-center justify-between mb-4 sm:hidden">
-              <h3 className="font-semibold">Filters</h3>
-              <button onClick={() => setShowFilters(false)} className="p-1">
+          <div className="fixed bottom-0 left-0 right-0 md:relative md:bottom-auto bg-white p-4 rounded-t-lg md:rounded-lg border md:w-48 md:sticky md:top-32 max-h-96 md:max-h-[calc(100vh-200px)] overflow-y-auto z-50">
+            <div className="flex items-center justify-between mb-4 md:hidden">
+              <h3 className="font-semibold text-gray-900">Filters</h3>
+              <button onClick={() => setShowFilters(false)} className="p-1 text-gray-500 active:opacity-70" aria-label="close filters">
                 <FiX size={20} />
               </button>
             </div>
@@ -81,12 +87,17 @@ export default function ProductList(){
             {/* Categories */}
             {categories.length > 0 && (
               <div className="mb-6">
-                <h4 className="font-semibold text-sm mb-3">Categories</h4>
+                <h4 className="font-semibold text-sm mb-3 text-gray-900">Categories</h4>
                 <div className="space-y-2">
                   <button
-                    onClick={() => setSelectedCategory(null)}
-                    className={`w-full text-left text-sm px-2 py-1 rounded ${
-                      !selectedCategory ? 'bg-blue-100 text-blue-700 font-medium' : 'hover:bg-gray-100'
+                    onClick={() => {
+                      setSelectedCategory(null)
+                      setShowFilters(false)
+                    }}
+                    className={`w-full text-left text-sm px-3 py-2 rounded touch-area min-h-[44px] transition ${
+                      !selectedCategory
+                        ? 'bg-orange-100 text-orange-700 font-medium'
+                        : 'hover:bg-gray-100 text-gray-700'
                     }`}
                   >
                     All Categories
@@ -94,9 +105,14 @@ export default function ProductList(){
                   {categories.map(cat => (
                     <button
                       key={cat}
-                      onClick={() => setSelectedCategory(cat)}
-                      className={`w-full text-left text-sm px-2 py-1 rounded ${
-                        selectedCategory === cat ? 'bg-blue-100 text-blue-700 font-medium' : 'hover:bg-gray-100'
+                      onClick={() => {
+                        setSelectedCategory(cat)
+                        setShowFilters(false)
+                      }}
+                      className={`w-full text-left text-sm px-3 py-2 rounded touch-area min-h-[44px] transition ${
+                        selectedCategory === cat
+                          ? 'bg-orange-100 text-orange-700 font-medium'
+                          : 'hover:bg-gray-100 text-gray-700'
                       }`}
                     >
                       {cat}
@@ -108,10 +124,10 @@ export default function ProductList(){
 
             {/* Price Range */}
             <div className="mb-6">
-              <h4 className="font-semibold text-sm mb-3">Price Range</h4>
-              <div className="space-y-2">
+              <h4 className="font-semibold text-sm mb-3 text-gray-900">Price Range</h4>
+              <div className="space-y-3">
                 <div>
-                  <label className="text-xs text-gray-600">Min: ₹{priceRange.min}</label>
+                  <label className="text-xs text-gray-600 block mb-1">Min: ₹{priceRange.min}</label>
                   <input
                     type="range"
                     min="0"
@@ -119,11 +135,11 @@ export default function ProductList(){
                     step="1000"
                     value={priceRange.min}
                     onChange={(e) => setPriceRange({ ...priceRange, min: Number(e.target.value) })}
-                    className="w-full"
+                    className="w-full h-2 cursor-pointer"
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-gray-600">Max: ₹{priceRange.max}</label>
+                  <label className="text-xs text-gray-600 block mb-1">Max: ₹{priceRange.max}</label>
                   <input
                     type="range"
                     min="0"
@@ -131,22 +147,22 @@ export default function ProductList(){
                     step="1000"
                     value={priceRange.max}
                     onChange={(e) => setPriceRange({ ...priceRange, max: Number(e.target.value) })}
-                    className="w-full"
+                    className="w-full h-2 cursor-pointer"
                   />
                 </div>
               </div>
             </div>
 
-            {/* Reset Filters */}
+            {/* Reset Button */}
             {(selectedCategory || priceRange.min !== 0 || priceRange.max !== 100000) && (
               <button
                 onClick={() => {
                   setSelectedCategory(null)
                   setPriceRange({ min: 0, max: 100000 })
                 }}
-                className="w-full py-2 text-sm border rounded hover:bg-gray-50 font-medium"
+                className="w-full py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 font-medium text-gray-700 active:opacity-70 touch-area"
               >
-                Reset Filters
+                Reset
               </button>
             )}
           </div>
@@ -156,17 +172,18 @@ export default function ProductList(){
         {filteredProducts.length === 0 ? (
           <div className="w-full text-center py-12">
             <p className="text-gray-500 mb-4">No products found</p>
-            <Link to="/products" className="text-blue-600 hover:text-blue-700 font-medium">
+            <Link to="/products" className="text-orange-600 hover:text-orange-700 font-medium">
               View all products →
             </Link>
           </div>
         ) : (
-          <div className="flex-1">
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4">
+          <div className="flex-1 min-w-0">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
               {filteredProducts.map(p => {
                 const isLiked = isWishlisted(p.id)
                 const handleWishlistToggle = (e) => {
                   e.preventDefault()
+                  e.stopPropagation()
                   if (isLiked) {
                     removeFromWishlist(p.id)
                   } else {
@@ -175,79 +192,80 @@ export default function ProductList(){
                 }
                 const handleAddToCart = (e) => {
                   e.preventDefault()
+                  e.stopPropagation()
                   addToCart({ ...p, qty: 1, size: 'M' })
                 }
                 const handleBuyNow = (e) => {
                   e.preventDefault()
+                  e.stopPropagation()
                   addToCart({ ...p, qty: 1, size: 'M' })
                   navigate('/checkout')
                 }
 
                 return (
-                  <div key={p.id} className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden group">
+                  <Link
+                    key={p.id}
+                    to={`/product/${p.id}`}
+                    className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden group active:shadow-lg transition-shadow"
+                  >
                     {/* Product Image */}
-                    <Link to={`/product/${p.id}`} className="block relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 h-24 sm:h-32">
+                    <div className="relative overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 h-24 sm:h-32">
                       {p.image ? (
-                        <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                        <img src={p.image} alt={p.name} className="w-full h-full object-cover group-active:scale-105 transition-transform" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center font-bold text-gray-400">Image</div>
                       )}
                       {p.discount && (
-                        <div className="absolute top-1 right-1 bg-red-500 text-white text-xs px-2 py-1 rounded">
-                          {p.discount}% OFF
+                        <div className="absolute top-1 right-1 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow">
+                          {p.discount}%
                         </div>
                       )}
-                    </Link>
+                    </div>
 
                     {/* Product Info */}
                     <div className="p-2 sm:p-3">
-                      <Link to={`/product/${p.id}`} className="block mb-2">
-                        <div className="text-sm sm:text-base font-medium text-gray-900 truncate hover:text-red-600">{p.name}</div>
-                        {p.category && <div className="text-xs text-gray-500">{p.category}</div>}
-                        <div className="flex items-center justify-between mt-1">
-                          <div className="text-xs sm:text-sm text-red-600 font-semibold">₹{p.price}</div>
-                          <div className="text-xs text-gray-400">★ {(p.rating || 4.5).toFixed(1)}</div>
-                        </div>
-                      </Link>
+                      <div className="mb-1 sm:mb-2">
+                        <h3 className="text-xs sm:text-sm font-semibold text-gray-900 line-clamp-2">{p.name}</h3>
+                        {p.category && <p className="text-xs text-gray-500 mt-0.5">{p.category}</p>}
+                      </div>
+
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-xs sm:text-sm font-bold text-orange-600">₹{p.price}</div>
+                        <div className="text-xs text-gray-500">★ {(p.rating || 4.5).toFixed(1)}</div>
+                      </div>
 
                       {/* Action Buttons */}
-                      <div className="flex gap-1 sm:gap-2 mt-2">
-                        {/* Add to Cart */}
+                      <div className="flex gap-1 text-xs sm:text-sm">
                         <button
                           onClick={handleAddToCart}
-                          className="flex-1 flex items-center justify-center gap-1 py-1.5 bg-red-50 text-red-600 rounded text-xs font-medium hover:bg-red-100 transition"
+                          className="flex-1 py-1.5 sm:py-2 bg-orange-100 text-orange-700 rounded font-medium active:opacity-70 min-h-[40px]"
                           title="Add to cart"
                         >
-                          <FiShoppingCart size={14} />
-                          <span className="hidden sm:inline">Cart</span>
+                          <FiShoppingCart size={14} className="mx-auto" />
                         </button>
 
-                        {/* Wishlist */}
                         <button
                           onClick={handleWishlistToggle}
-                          className={`flex-1 flex items-center justify-center gap-1 py-1.5 rounded text-xs font-medium transition ${
+                          className={`flex-1 py-1.5 sm:py-2 rounded font-medium active:opacity-70 min-h-[40px] transition ${
                             isLiked
-                              ? 'bg-red-100 text-red-600 hover:bg-red-200'
-                              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                              ? 'bg-red-100 text-red-600'
+                              : 'bg-gray-100 text-gray-600'
                           }`}
                           title={isLiked ? 'Remove from wishlist' : 'Add to wishlist'}
                         >
-                          <FiHeart size={14} fill={isLiked ? 'currentColor' : 'none'} />
-                          <span className="hidden sm:inline">Wish</span>
+                          <FiHeart size={14} className="mx-auto" fill={isLiked ? 'currentColor' : 'none'} />
                         </button>
 
-                        {/* Buy Now */}
                         <button
                           onClick={handleBuyNow}
-                          className="flex-1 flex items-center justify-center gap-1 py-1.5 bg-green-600 text-white rounded text-xs font-medium hover:bg-green-700 transition"
+                          className="flex-1 py-1.5 sm:py-2 bg-green-600 text-white rounded font-medium active:opacity-70 min-h-[40px]"
                           title="Buy now"
                         >
-                          <span className="hidden sm:inline">Buy</span>
-                          <span className="sm:hidden">→</span>
+                          Buy
                         </button>
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 )
               })}
             </div>

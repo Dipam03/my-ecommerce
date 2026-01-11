@@ -6,17 +6,6 @@ export default function UPIScanner({ onSuccess, onClose, amount, upiId }) {
   const [error, setError] = useState('')
   const videoRef = useRef(null)
 
-  useEffect(() => {
-    if (scanning) {
-      initializeScanner()
-    }
-    return () => {
-      if (videoRef.current?.srcObject) {
-        videoRef.current.srcObject.getTracks().forEach(t => t.stop())
-      }
-    }
-  }, [scanning])
-
   const initializeScanner = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
@@ -29,17 +18,27 @@ export default function UPIScanner({ onSuccess, onClose, amount, upiId }) {
     }
   }
 
+  useEffect(() => {
+    if (scanning) {
+      setTimeout(() => initializeScanner(), 0)
+    }
+    return () => {
+      const videoElement = videoRef.current
+      if (videoElement?.srcObject) {
+        videoElement.srcObject.getTracks().forEach(t => t.stop())
+      }
+    }
+  }, [scanning])
+
   const handleManualUPI = () => {
     // Simulate UPI payment received
-    const upiData = `upi://pay?pa=${upiId}&pn=Crodyto&am=${amount}`
-    
     // In a real app, you'd open UPI app here or check for payment confirmation
     // For now, we'll simulate successful payment
     setTimeout(() => {
-      onSuccess({ 
+      onSuccess({
         transactionId: 'UPI_' + Date.now(),
         status: 'success',
-        amount: amount 
+        amount: amount
       })
     }, 1000)
   }
