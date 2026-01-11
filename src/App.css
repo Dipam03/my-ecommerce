@@ -30,7 +30,6 @@ body {
   background: #ffffff;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
-  text-size-adjust: 100%;
   position: fixed;
   overflow: hidden;
 }
@@ -49,7 +48,6 @@ body {
 main.scrollable {
   overflow-y: auto;
   overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
   flex: 1;
 }
@@ -217,7 +215,6 @@ a:active {
 .scrollable {
   overflow-y: auto;
   overflow-x: hidden;
-  -webkit-overflow-scrolling: touch;
 }
 
 /* Gradient backgrounds */

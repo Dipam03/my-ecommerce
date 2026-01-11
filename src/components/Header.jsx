@@ -2,16 +2,12 @@ import { Link, useNavigate } from 'react-router-dom'
 import { FiShoppingCart, FiSearch } from 'react-icons/fi'
 import { useCartStore } from '../store/cartStore'
 import { useState } from 'react'
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { auth } from '../firebase'
-import { signOut } from 'firebase/auth'
 import Logo from './Logo'
 
 export default function Header({ onCartClick }) {
   const total = useCartStore((s) => s.totalCount)
   const navigate = useNavigate()
   const [q, setQ] = useState('')
-  const [user] = useAuthState(auth)
 
   const onSearch = (e) => {
     e.preventDefault()
@@ -19,10 +15,6 @@ export default function Header({ onCartClick }) {
       navigate('/products?q=' + encodeURIComponent(q))
       setQ('')
     }
-  }
-
-  const onLogout = async () => {
-    try { await signOut(auth) } catch (e) { console.warn(e) }
   }
 
   return (
@@ -55,15 +47,6 @@ export default function Header({ onCartClick }) {
                 <span className="absolute top-0 right-0 bg-yellow-400 text-orange-700 text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">{total > 99 ? '99+' : total}</span>
               )}
             </button>
-
-            {user ? (
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-white truncate max-w-[120px]">{user.displayName || user.email?.substring(0, 10)}</span>
-                <button onClick={onLogout} className="px-3 py-1.5 text-sm bg-orange-500 text-white rounded-lg active:opacity-70 font-medium min-h-[40px]">Logout</button>
-              </div>
-            ) : (
-              <Link to="/login" className="px-3 py-1.5 text-sm bg-orange-500 text-white rounded-lg active:opacity-70 font-medium touch-area">Login</Link>
-            )}
           </div>
         </div>
 
@@ -95,12 +78,6 @@ export default function Header({ onCartClick }) {
                 <span className="absolute top-0 right-0 bg-yellow-400 text-orange-700 text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">{total > 99 ? '99+' : total}</span>
               )}
             </button>
-
-            {user ? (
-              <button onClick={onLogout} className="touch-area text-xs bg-white bg-opacity-90 text-gray-900 rounded-lg font-medium px-2 h-10">Logout</button>
-            ) : (
-              <Link to="/login" className="touch-area text-xs bg-white bg-opacity-90 text-gray-900 rounded-lg font-medium px-2 h-10">Login</Link>
-            )}
           </div>
         </div>
       </div>

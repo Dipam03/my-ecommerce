@@ -19,7 +19,6 @@ export default function Checkout() {
   const [error, setError] = useState('')
   const [showUPIScanner, setShowUPIScanner] = useState(false)
   const [upiPaymentStatus, setUpiPaymentStatus] = useState(null)
-  const [loading, setLoading] = useState(true)
 
   // Load saved address from Firestore on mount
   useEffect(() => {

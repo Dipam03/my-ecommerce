@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { auth, db, storage } from '../firebase'
 import { useNavigate, Link } from 'react-router-dom'
-import { FiEdit2, FiPhone, FiMessageCircle } from 'react-icons/fi'
+import { FiEdit2, FiPhone, FiMessageCircle, FiLogOut } from 'react-icons/fi'
 import { doc, getDoc, setDoc } from 'firebase/firestore'
 import { ref as sRef, uploadBytesResumable, getDownloadURL } from 'firebase/storage'
-import { updateProfile } from 'firebase/auth'
+import { updateProfile, signOut } from 'firebase/auth'
 
 export default function Account(){
   const [user] = useAuthState(auth)
@@ -173,6 +173,18 @@ export default function Account(){
   const handleChatSupport = () => {
     const whatsappUrl = 'https://wa.me/919000000000?text=Hello%20I%20need%20support'
     window.open(whatsappUrl, '_blank')
+  }
+
+  const handleLogout = async () => {
+    if (window.confirm('Are you sure you want to logout?')) {
+      try {
+        await signOut(auth)
+        navigate('/')
+      } catch (e) {
+        console.warn('Logout failed', e)
+        alert('Failed to logout. Please try again.')
+      }
+    }
   }
 
   if (loading) {
@@ -384,6 +396,17 @@ export default function Account(){
           </button>
         </div>
       </section>
+
+      {user && (
+        <section className="mb-4 bg-white p-3 rounded border border-red-200 bg-red-50">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 bg-red-600 text-white py-2.5 rounded-lg font-semibold hover:bg-red-700 active:opacity-90 transition touch-area min-h-[44px]"
+          >
+            <FiLogOut size={18} /> Logout
+          </button>
+        </section>
+      )}
     </div>
   )
 }

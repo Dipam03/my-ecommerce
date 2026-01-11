@@ -1,13 +1,11 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { FiHome, FiHeart, FiUser, FiShoppingBag, FiSearch } from 'react-icons/fi'
 import CartBar from './CartBar'
-import { useCartStore } from '../store/cartStore'
 import { useWishlistStore } from '../store/wishlistStore'
 
 export default function BottomNav() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const cartItems = useCartStore(state => state.items)
   const wishlistItems = useWishlistStore(state => state.items)
 
   const isActive = (path) => pathname === path || (path === '/products' && pathname.startsWith('/products'))
